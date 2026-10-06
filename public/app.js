@@ -393,27 +393,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const finalDownloadUrl = item.isLoader ? item.url : `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`;
         const isExternalLoader = !!item.isLoader;
 
-        row.innerHTML = `
-          <div class="stream-meta">
-            <span class="format-chip ${isPhoto ? 'photo' : ''}">${formatLabel}</span>
-            <div>
-              <div class="stream-quality-name">
-                ${item.quality || 'High Quality'}
-                ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
+        if (item.isLoader) {
+          row.innerHTML = `
+            <div class="stream-meta">
+              <span class="format-chip">${formatLabel}</span>
+              <div>
+                <div class="stream-quality-name">
+                  ${item.quality || 'High Quality'}
+                  ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
+                </div>
+                <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || '1-Click Direct In-App Download'}</small>
               </div>
-              <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed Stream'}</small>
             </div>
-          </div>
-          <a href="${finalDownloadUrl}" ${isExternalLoader ? 'target="_blank" rel="noopener noreferrer"' : ''} class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
-            <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
-          </a>
-        `;
+            <div style="min-width: 180px; max-width: 220px; height: 52px; display: flex; align-items: center;">
+              <iframe src="${item.url}" style="width: 100%; height: 50px; border: none; overflow: hidden; border-radius: 12px;" scrolling="no"></iframe>
+            </div>
+          `;
+        } else {
+          row.innerHTML = `
+            <div class="stream-meta">
+              <span class="format-chip ${isPhoto ? 'photo' : ''}">${formatLabel}</span>
+              <div>
+                <div class="stream-quality-name">
+                  ${item.quality || 'High Quality'}
+                  ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
+                </div>
+                <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed Stream'}</small>
+              </div>
+            </div>
+            <a href="${finalDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
+              <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
+            </a>
+          `;
+        }
 
         downloadOptionsContainer.appendChild(row);
       });
     } else {
       downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.95rem;">No direct download formats available. Please try another link.</p>`;
     }
+
 
 
 
