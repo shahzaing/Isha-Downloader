@@ -426,14 +426,15 @@ document.addEventListener('DOMContentLoaded', () => {
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // Force Direct Device Download (Saves to Phone Gallery / PC Downloads Folder)
+  // Direct Device Download Action
   async function forceDownloadFile(fileUrl, filename, btnElement, isDirect) {
     const originalHtml = btnElement.innerHTML;
-    btnElement.innerHTML = `<span>⏳ Downloading...</span>`;
-    btnElement.disabled = true;
 
     try {
       if (isDirect || fileUrl.startsWith('https://i.pinimg.com') || fileUrl.startsWith('https://i.ytimg.com')) {
+        btnElement.innerHTML = `<span>⏳ Saving 4K Photo...</span>`;
+        btnElement.disabled = true;
+
         const response = await fetch(fileUrl);
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
@@ -447,28 +448,25 @@ document.addEventListener('DOMContentLoaded', () => {
           window.URL.revokeObjectURL(blobUrl);
           a.remove();
         }, 1000);
-        showToast('Saved to device successfully! 🎉', 'success');
+        showToast('Photo saved to your device! 📸🎉', 'success');
       } else {
-        // Direct download proxy or engine tab
-        const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&filename=${encodeURIComponent(filename)}`;
-        const a = document.createElement('a');
-        a.href = proxyUrl;
-        a.target = '_blank';
-        a.setAttribute('download', filename);
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        showToast('Download started! Check your downloads. 📥', 'success');
+        // Direct Video Downloader Gateway
+        btnElement.innerHTML = `<span>⚡ Opening Downloader...</span>`;
+        window.open(fileUrl, '_blank', 'noopener,noreferrer');
+        showToast('Opening video download server... 📥', 'info');
       }
     } catch (err) {
-      console.warn('Fallback direct window download', err);
+      console.warn('Direct download trigger', err);
       window.open(fileUrl, '_blank');
       showToast('Opening download link... 📥', 'info');
     } finally {
-      btnElement.innerHTML = originalHtml;
-      btnElement.disabled = false;
+      setTimeout(() => {
+        btnElement.innerHTML = originalHtml;
+        btnElement.disabled = false;
+      }, 1500);
     }
   }
+
 
 
   // 8. Contact Isha Button
