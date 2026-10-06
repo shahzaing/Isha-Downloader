@@ -1,5 +1,5 @@
 // Isha Video Downloader - Frontend Client Logic
-// Developed by Isha Zahid
+// Developed by Isha Zahid (Dentist & Creator)
 
 document.addEventListener('DOMContentLoaded', () => {
   // Elements
@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingState = document.getElementById('loadingState');
   const resultCard = document.getElementById('resultCard');
   const toastContainer = document.getElementById('toastContainer');
+  const modeBadge = document.getElementById('modeBadge');
+  const modeText = document.getElementById('modeText');
+  const btnDemoTest = document.getElementById('btnDemoTest');
+  const fieldIcon = document.getElementById('fieldIcon');
 
   // Preview elements
   const resultThumb = document.getElementById('resultThumb');
@@ -21,7 +25,127 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultAuthor = document.getElementById('resultAuthor');
   const downloadOptionsContainer = document.getElementById('downloadOptions');
 
-  // 1. Platform Detection
+  // Platform Configs & Sample Links for 1-Click Testing
+  const PLATFORM_DATA = {
+    all: {
+      name: 'All-in-One Universal',
+      badge: 'Universal Mode',
+      desc: 'Paste any social media link below to fetch 4K photos, 1080p/720p videos, or MP3.',
+      placeholder: 'Paste Instagram, TikTok, Pinterest, YouTube, or FB link here...',
+      icon: 'fa-solid fa-link',
+      sample: 'https://www.tiktok.com/@tiktok/video/7106594312292453678'
+    },
+    instagram: {
+      name: 'Instagram 4K',
+      badge: 'Instagram Mode',
+      desc: '📸 4K Ultra HD Photos, Multi-Image Carousels, and 1080p Reels ready.',
+      placeholder: 'Paste Instagram Reel or 4K Photo Post link here...',
+      icon: 'fa-brands fa-instagram',
+      sample: 'https://www.instagram.com/reel/C32aN0rL_6B/'
+    },
+    pinterest: {
+      name: 'Pinterest 4K',
+      badge: 'Pinterest Mode',
+      desc: '📌 4K Originals Wallpapers, Aesthetic Art Pins, and HD Video Pins.',
+      placeholder: 'Paste Pinterest Pin or 4K Wallpaper link here...',
+      icon: 'fa-brands fa-pinterest',
+      sample: 'https://www.pinterest.com/pin/123456789/'
+    },
+    tiktok: {
+      name: 'TikTok HD',
+      badge: 'TikTok Mode',
+      desc: '🎵 Clean HD Video without watermark logo + original 320kbps MP3 track.',
+      placeholder: 'Paste TikTok Video link here (e.g. https://www.tiktok.com/@...)...',
+      icon: 'fa-brands fa-tiktok',
+      sample: 'https://www.tiktok.com/@tiktok/video/7106594312292453678'
+    },
+    youtube: {
+      name: 'YouTube 1080p',
+      badge: 'YouTube Mode',
+      desc: '📺 YouTube Shorts and full videos in 1080p Full HD & 720p HD.',
+      placeholder: 'Paste YouTube Shorts or Video link here...',
+      icon: 'fa-brands fa-youtube',
+      sample: 'https://www.youtube.com/shorts/3f4-g_W9B1E'
+    },
+    facebook: {
+      name: 'Facebook HD',
+      badge: 'Facebook Mode',
+      desc: '📘 Public Facebook Watch videos, Reels, and stories in HD & SD.',
+      placeholder: 'Paste Facebook Video or Reel link here...',
+      icon: 'fa-brands fa-facebook',
+      sample: 'https://www.facebook.com/watch/?v=10153231379946729'
+    },
+    twitter: {
+      name: 'Twitter / X',
+      badge: 'Twitter Mode',
+      desc: '🐦 High-framerate video tweets and GIFs in highest resolution.',
+      placeholder: 'Paste Twitter / X Video link here...',
+      icon: 'fa-brands fa-x-twitter',
+      sample: 'https://x.com/Twitter/status/123456789'
+    }
+  };
+
+  let activeTab = 'all';
+
+  // 1. Switch Active Platform Tab Function
+  function switchPlatformTab(tabKey) {
+    const config = PLATFORM_DATA[tabKey] || PLATFORM_DATA.all;
+    activeTab = tabKey;
+
+    // Update Tab UI Buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.getAttribute('data-tab') === tabKey) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update Mode Banner & Input
+    modeBadge.textContent = config.badge;
+    modeText.textContent = config.desc;
+    videoInput.placeholder = config.placeholder;
+    if (fieldIcon) {
+      fieldIcon.className = `${config.icon} field-icon`;
+    }
+
+    // Scroll smoothly to downloader
+    const downloaderSection = document.getElementById('downloader');
+    if (downloaderSection) {
+      downloaderSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    videoInput.focus();
+    showToast(`Switched to ${config.name}! 🚀`, 'info');
+  }
+
+  // Bind Platform Tab Buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+      switchPlatformTab(tab);
+    });
+  });
+
+  // Bind Left Dock Icons & Supported Platform Cards to Switch Tab
+  document.querySelectorAll('.dock-icon[data-tab], .platform-showcase-card[data-open-tab]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const tab = el.getAttribute('data-tab') || el.getAttribute('data-open-tab');
+      if (tab) {
+        switchPlatformTab(tab);
+      }
+    });
+  });
+
+  // Test Sample Link Button
+  btnDemoTest.addEventListener('click', () => {
+    const sample = PLATFORM_DATA[activeTab]?.sample || PLATFORM_DATA.tiktok.sample;
+    videoInput.value = sample;
+    updateInputUI();
+    showToast('Sample link inserted! Fetching media... 🧪', 'info');
+    fetchMedia();
+  });
+
+  // 2. Platform Detection Function
   function checkUrlPlatform(url) {
     if (!url) return null;
     const lower = url.toLowerCase();
@@ -55,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   videoInput.addEventListener('input', updateInputUI);
 
-  // 2. Paste Button
+  // 3. Paste Button
   btnPaste.addEventListener('click', async () => {
     try {
       if (navigator.clipboard && navigator.clipboard.readText) {
@@ -78,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 3. Clear Button
+  // 4. Clear Button
   btnClear.addEventListener('click', () => {
     videoInput.value = '';
     updateInputUI();
@@ -86,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     videoInput.focus();
   });
 
-  // 4. Download Action Trigger
+  // 5. Download Action Trigger
   btnFetch.addEventListener('click', () => {
     fetchMedia();
   });
@@ -97,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 5. Fetch Media from API
+  // 6. Fetch Media from API
   async function fetchMedia() {
     const url = videoInput.value.trim();
 
@@ -116,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingState.classList.add('active');
     resultCard.classList.remove('active');
     btnFetch.disabled = true;
-    btnFetch.innerHTML = '<span>⚡ Processing...</span>';
+    btnFetch.innerHTML = '<span>⚡ Processing Media...</span>';
 
     try {
       const response = await fetch('/api/resolve', {
@@ -143,9 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 6. Render Download Results (4K Photos, 1080p, 720p, MP3)
+  // 7. Render Download Results (4K Photos, 1080p, 720p, MP3)
   function renderResult(data) {
-    resultTitle.textContent = data.title || 'Social Media Media File';
+    resultTitle.textContent = data.title || 'Social Media File';
     resultAuthor.textContent = data.author ? `By ${data.author}` : 'Public Post';
     resultPlatform.innerHTML = `<i class="fa-solid fa-sparkles"></i> ${data.platform || 'Media'}`;
 
@@ -208,7 +332,18 @@ document.addEventListener('DOMContentLoaded', () => {
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // 7. Toast Notifications
+  // 8. Contact Isha Button
+  const btnContactIsha = document.getElementById('btnContactIsha');
+  if (btnContactIsha) {
+    btnContactIsha.addEventListener('click', () => {
+      const userMsg = prompt("Send a note / feedback to Isha Zahid (Dentist & Creator):");
+      if (userMsg && userMsg.trim().length > 0) {
+        showToast("Thank you for your message! Isha Zahid will review it soon. ♡", "success");
+      }
+    });
+  }
+
+  // 9. Toast Notifications
   function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast-bubble toast-${type}`;
@@ -228,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
-  // 8. FAQ Accordion Toggle
+  // 10. FAQ Accordion Toggle
   const faqTriggers = document.querySelectorAll('.faq-trigger-btn');
   faqTriggers.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -240,15 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isActive) {
         parent.classList.add('active');
       }
-    });
-  });
-
-  // 9. Interactive Platform Pills & Left Dock
-  document.querySelectorAll('.platform-pill, .dock-icon[data-platform]').forEach(el => {
-    el.addEventListener('click', () => {
-      const name = el.getAttribute('data-platform') || el.textContent.trim();
-      videoInput.focus();
-      showToast(`Ready for ${name.toUpperCase()}! Paste your link above 🚀`, 'info');
     });
   });
 });
