@@ -1,4 +1,4 @@
-// Stream / Direct Download Proxy for Isha Video Downloader
+// Direct Stream Download Proxy for Isha Video Downloader
 // Developed by Isha Zahid (Dentist & Creator)
 
 module.exports = async (req, res) => {
@@ -9,17 +9,17 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
+  const fileUrl = req.query.url;
+  const filename = req.query.filename || `IshaDownloader_${Date.now()}`;
+  const ext = req.query.ext || 'mp4';
+
+  if (!fileUrl) {
+    return res.status(400).json({ error: 'URL parameter is required.' });
+  }
+
+  const cleanFilename = filename.endsWith(`.${ext}`) ? filename : `${filename}.${ext}`;
+
   try {
-    const fileUrl = req.query.url;
-    const filename = req.query.filename || `IshaDownloader_${Date.now()}`;
-    const ext = req.query.ext || 'mp4';
-
-    if (!fileUrl) {
-      return res.status(400).json({ error: 'URL is required' });
-    }
-
-    const cleanFilename = filename.endsWith(`.${ext}`) ? filename : `${filename}.${ext}`;
-
     const upstreamRes = await fetch(fileUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -27,8 +27,9 @@ module.exports = async (req, res) => {
     });
 
     if (!upstreamRes.ok) {
+      res.setHeader('Content-Type', 'application/octet-stream');
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
-      return res.redirect(fileUrl);
+      return res.redirect(302, fileUrl);
     }
 
     const contentType = upstreamRes.headers.get('content-type') || (ext === 'mp3' ? 'audio/mpeg' : (ext === 'jpg' ? 'image/jpeg' : 'video/mp4'));
@@ -43,9 +44,8 @@ module.exports = async (req, res) => {
     const arrayBuffer = await upstreamRes.arrayBuffer();
     return res.send(Buffer.from(arrayBuffer));
   } catch (err) {
-    if (req.query.url) {
-      return res.redirect(req.query.url);
-    }
-    return res.status(500).json({ error: 'Download proxy failed' });
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
+    return res.redirect(302, fileUrl);
   }
 };

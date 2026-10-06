@@ -390,17 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .replace(/[^a-zA-Z0-9_-]/g, '_')
           .slice(0, 30);
         
-        const isDirect = item.direct || item.url.startsWith('https://i.pinimg.com') || item.url.startsWith('https://i.ytimg.com');
-        const targetLink = isDirect ? item.url : item.url;
-
-        const rowBtn = document.createElement('button');
-        rowBtn.type = 'button';
-        rowBtn.className = `btn-stream-download ${isPhoto ? 'photo-btn' : ''}`;
-        rowBtn.innerHTML = `<span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>`;
-
-        rowBtn.addEventListener('click', async () => {
-          await forceDownloadFile(item.url, `${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`, rowBtn, isPhoto || item.direct);
-        });
+        const proxyDownloadUrl = `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`;
 
         row.innerHTML = `
           <div class="stream-meta">
@@ -410,17 +400,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${item.quality || 'High Quality'}
                 ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
               </div>
-              <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'High Speed Server'}</small>
+              <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed Stream'}</small>
             </div>
           </div>
+          <a href="${proxyDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
+            <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
+          </a>
         `;
 
-        row.appendChild(rowBtn);
         downloadOptionsContainer.appendChild(row);
       });
     } else {
       downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.95rem;">No direct download formats available. Please try another link.</p>`;
     }
+
 
     resultCard.classList.add('active');
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
