@@ -27,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const lower = url.toLowerCase();
     if (lower.includes('tiktok.com')) return { name: 'TikTok', class: 'tiktok', icon: '🎵' };
     if (lower.includes('instagram.com')) return { name: 'Instagram', class: 'instagram', icon: '📸' };
+    if (lower.includes('pinterest.com') || lower.includes('pin.it')) return { name: 'Pinterest', class: 'pinterest', icon: '📌' };
     if (lower.includes('youtube.com') || lower.includes('youtu.be')) return { name: 'YouTube', class: 'youtube', icon: '📺' };
     if (lower.includes('facebook.com') || lower.includes('fb.watch') || lower.includes('fb.com')) return { name: 'Facebook', class: 'facebook', icon: '📘' };
     if (lower.includes('twitter.com') || lower.includes('x.com')) return { name: 'Twitter / X', class: 'twitter', icon: '🐦' };
-    if (lower.includes('pinterest.com') || lower.includes('pin.it')) return { name: 'Pinterest', class: 'pinterest', icon: '📌' };
     if (lower.includes('reddit.com') || lower.includes('redd.it')) return { name: 'Reddit', class: 'reddit', icon: '🤖' };
     return null;
   }
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = videoInput.value.trim();
 
     if (!url) {
-      showToast('Please paste a video link first!', 'error');
+      showToast('Please paste a photo or video link first!', 'error');
       videoInput.focus();
       return;
     }
@@ -128,26 +128,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to download video. Please check the URL.');
+        throw new Error(data.error || 'Failed to download media. Please check the URL.');
       }
 
       renderResult(data);
-      showToast('Video ready for download! 🎉', 'success');
+      showToast('Media ready for 4K / HD download! 🎉', 'success');
     } catch (err) {
       console.error(err);
-      showToast(err.message || 'Could not fetch video. Verify the link is public.', 'error');
+      showToast(err.message || 'Could not fetch media. Verify the link is public.', 'error');
     } finally {
       loadingState.classList.remove('active');
       btnFetch.disabled = false;
-      btnFetch.innerHTML = '<span>⚡ Download Now</span>';
+      btnFetch.innerHTML = '<span>⚡ Fetch & Download</span>';
     }
   }
 
-  // 6. Render Download Results
+  // 6. Render Download Results (4K Photos, 1080p, 720p, MP3)
   function renderResult(data) {
-    resultTitle.textContent = data.title || 'Social Media Video';
-    resultAuthor.textContent = data.author ? `By ${data.author}` : 'Public Video';
-    resultPlatform.innerHTML = `<i class="fa-solid fa-play"></i> ${data.platform || 'Media'}`;
+    resultTitle.textContent = data.title || 'Social Media Media File';
+    resultAuthor.textContent = data.author ? `By ${data.author}` : 'Public Post';
+    resultPlatform.innerHTML = `<i class="fa-solid fa-sparkles"></i> ${data.platform || 'Media'}`;
 
     if (data.thumbnail) {
       resultThumb.src = data.thumbnail;
@@ -171,28 +171,30 @@ document.addEventListener('DOMContentLoaded', () => {
         row.className = 'stream-row';
 
         const isAudio = item.type === 'audio' || item.ext === 'mp3';
-        const isPhoto = item.type === 'photo';
-        const formatLabel = isAudio ? 'MP3' : (isPhoto ? 'JPG' : (item.ext ? item.ext.toUpperCase() : 'MP4'));
+        const isPhoto = item.type === 'photo' || item.ext === 'jpg' || item.ext === 'png';
+        const formatLabel = isAudio ? 'MP3' : (isPhoto ? '4K JPG' : (item.resolution?.includes('1080') ? '1080p' : (item.resolution?.includes('720') ? '720p' : 'MP4')));
+
+        const isUltra = isPhoto || (item.resolution && item.resolution.includes('1080'));
 
         const cleanSafeName = (data.title || 'IshaDownloader')
           .replace(/[^a-zA-Z0-9_-]/g, '_')
           .slice(0, 30);
         
-        const proxyDownloadUrl = `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || 'mp4'}`;
+        const proxyDownloadUrl = `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : 'mp4')}`;
 
         row.innerHTML = `
           <div class="stream-meta">
-            <span class="format-chip">${formatLabel}</span>
+            <span class="format-chip ${isPhoto ? 'photo' : ''}">${formatLabel}</span>
             <div>
               <div class="stream-quality-name">
                 ${item.quality || 'High Quality'}
-                ${item.badge ? `<span class="gold-badge">${item.badge}</span>` : ''}
+                ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
               </div>
               <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed CDN'}</small>
             </div>
           </div>
-          <a href="${proxyDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || 'mp4'}">
-            <span>📥 Download</span>
+          <a href="${proxyDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : 'mp4')}">
+            <span>${isPhoto ? '📸 Save 4K Photo' : '📥 Download Video'}</span>
           </a>
         `;
 
@@ -241,12 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 9. Interactive Platform Pills
-  document.querySelectorAll('.platform-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      const name = pill.textContent.trim();
+  // 9. Interactive Platform Pills & Left Dock
+  document.querySelectorAll('.platform-pill, .dock-icon[data-platform]').forEach(el => {
+    el.addEventListener('click', () => {
+      const name = el.getAttribute('data-platform') || el.textContent.trim();
       videoInput.focus();
-      showToast(`Ready for ${name}! Copy and paste your link above. 🚀`, 'info');
+      showToast(`Ready for ${name.toUpperCase()}! Paste your link above 🚀`, 'info');
     });
   });
 });

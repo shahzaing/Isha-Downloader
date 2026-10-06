@@ -1,12 +1,7 @@
 /* ==========================================================================
-   ISHA VIDEO DOWNLOADER - IMPERIAL PURPLE & GOLD ROYAL THEME (#3)
+   ISHA VIDEO DOWNLOADER - LUXURY AESTHETIC IMPERIAL PURPLE DESIGN
    Developed by Isha Zahid
-   Palette:
-   - Primary: #240046 (Deep Imperial Purple)
-   - Secondary: #E0AAFF (Radiant Lavender Lilac)
-   - CTA Buttons / Highlights: #FBB02D (Warm Royal Gold / Amber)
-   - Cards / Sections: #ECCAFF / Deep Purple Glass
-   - Dark Core: #03071E / #0d021f
+   Inspired by Royal Pastel & Creative Creator Aesthetics
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@700;800;900&display=swap');
@@ -16,39 +11,39 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 
-  /* Palette #3 Imperial Purple Colors */
+  /* Palette #3 Imperial Purple & Royal Accents */
   --c-primary: #240046;
   --c-secondary: #E0AAFF;
   --c-cta: #FBB02D;
   --c-cta-hover: #e59b1f;
   --c-card-lilac: #ECCAFF;
   --c-dark: #03071E;
-  --c-dark-surface: #0e0321;
+  --c-dark-surface: #0a0118;
   --c-dark-glass: rgba(36, 0, 70, 0.45);
   --c-dark-glass-hover: rgba(56, 4, 105, 0.65);
 
-  --border-subtle: rgba(224, 170, 255, 0.12);
+  --border-subtle: rgba(224, 170, 255, 0.14);
   --border-glow: rgba(224, 170, 255, 0.35);
   --border-gold: rgba(251, 176, 45, 0.4);
 
   --grad-imperial: linear-gradient(135deg, #E0AAFF 0%, #FBB02D 100%);
   --grad-royal-button: linear-gradient(135deg, #FBB02D 0%, #f97316 100%);
   --grad-purple-deep: linear-gradient(135deg, #240046 0%, #5a189a 50%, #9d4edd 100%);
-  --grad-badge: linear-gradient(135deg, rgba(224, 170, 255, 0.2) 0%, rgba(251, 176, 45, 0.15) 100%);
+  --grad-hero-badge: linear-gradient(135deg, rgba(224, 170, 255, 0.15) 0%, rgba(251, 176, 45, 0.12) 100%);
 
   --text-main: #f8fafc;
   --text-muted: #d8b4fe;
-  --text-dim: #9d8db8;
+  --text-dim: #a797c2;
 
   --shadow-gold: 0 10px 30px -5px rgba(251, 176, 45, 0.4);
   --shadow-purple: 0 0 50px -10px rgba(157, 78, 221, 0.35);
   --shadow-3d: 0 25px 60px -15px rgba(3, 7, 30, 0.85);
 
   --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-xl: 36px;
   --radius-full: 9999px;
 }
 
@@ -76,6 +71,57 @@ body {
     radial-gradient(rgba(251, 176, 45, 0.05) 1px, transparent 1px);
   background-size: 32px 32px, 64px 64px;
   background-position: 0 0, 16px 16px;
+}
+
+/* Floating Left Dock (Sample #3 Aesthetic) */
+.floating-social-bar {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(36, 0, 70, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glow);
+  padding: 14px 10px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 30px rgba(3, 7, 30, 0.6);
+}
+
+@media (max-width: 900px) {
+  .floating-social-bar {
+    display: none;
+  }
+}
+
+.dock-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-secondary);
+  font-size: 1.1rem;
+  text-decoration: none;
+  background: rgba(224, 170, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dock-icon:hover {
+  background: var(--grad-royal-button);
+  color: var(--c-dark);
+  transform: scale(1.15) translateX(4px);
+  box-shadow: var(--shadow-gold);
+}
+
+.dock-home {
+  background: var(--grad-imperial);
+  color: var(--c-dark);
 }
 
 /* Background Royal Aura Floaters */
@@ -132,14 +178,14 @@ body {
 /* Layout Container */
 .container {
   width: 100%;
-  max-width: 1160px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 0 24px;
   position: relative;
   z-index: 1;
 }
 
-/* Typography Enhancements */
+/* Typography Helpers */
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
   letter-spacing: -0.03em;
@@ -321,47 +367,310 @@ h1, h2, h3, h4 {
   transform: translateY(-1px);
 }
 
-/* Hero Section */
-.hero-wrapper {
-  padding: 60px 0 30px;
-  text-align: center;
+/* Hero Aesthetic Section (Sample 2 & 3 Split Style) */
+.hero-aesthetic-section {
+  padding: 60px 0 40px;
 }
 
-.hero-pill-badge {
+.hero-split-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 860px) {
+  .hero-split-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 50px;
+  }
+}
+
+.hero-left-content {
+  text-align: left;
+}
+
+@media (max-width: 860px) {
+  .hero-left-content {
+    text-align: center;
+  }
+}
+
+.hero-greeting-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(36, 0, 70, 0.7);
+  gap: 8px;
+  background: rgba(224, 170, 255, 0.12);
   border: 1px solid var(--border-glow);
-  padding: 7px 20px;
+  padding: 6px 18px;
   border-radius: var(--radius-full);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--c-secondary);
-  font-weight: 600;
-  margin-bottom: 24px;
-  box-shadow: 0 0 25px rgba(224, 170, 255, 0.15);
+  margin-bottom: 20px;
+  letter-spacing: 0.06em;
 }
 
-.hero-pill-badge i {
-  color: var(--c-cta);
+.heart-pulse {
+  color: #f43f5e;
+  font-size: 1rem;
+  animation: pulseDot 1.4s infinite;
 }
 
-.hero-heading {
-  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+.hero-big-title {
+  font-family: var(--font-brand);
+  font-size: clamp(2.6rem, 5.5vw, 4.4rem);
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.08;
   margin-bottom: 18px;
 }
 
-.hero-desc {
-  font-size: clamp(1rem, 2vw, 1.22rem);
+.hero-description {
+  font-size: clamp(1rem, 2vw, 1.18rem);
   color: var(--text-muted);
-  max-width: 680px;
-  margin: 0 auto 36px;
-  font-weight: 400;
+  line-height: 1.65;
+  margin-bottom: 30px;
+  max-width: 580px;
 }
 
-/* Ultra Glassmorphic Downloader Chamber */
+.hero-description strong {
+  color: #fff;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 860px) {
+  .hero-cta-group {
+    justify-content: center;
+  }
+}
+
+.btn-hero-primary {
+  background: var(--grad-royal-button);
+  color: #03071E;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  padding: 15px 32px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-gold);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: linear-gradient(135deg, #ffc043 0%, #ea580c 100%);
+  box-shadow: 0 14px 35px -3px rgba(251, 176, 45, 0.6);
+}
+
+.btn-hero-secondary {
+  background: rgba(36, 0, 70, 0.6);
+  border: 1px solid var(--border-glow);
+  color: var(--c-secondary);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 15px 28px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-hero-secondary:hover {
+  background: rgba(224, 170, 255, 0.15);
+  border-color: var(--c-secondary);
+  color: #fff;
+}
+
+.hero-feature-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 860px) {
+  .hero-feature-tags {
+    justify-content: center;
+  }
+}
+
+.tag-pill {
+  background: rgba(224, 170, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag-pill i {
+  color: var(--c-cta);
+  font-size: 0.75rem;
+}
+
+/* Hero Right Visual (3D Avatar & Floating Badges) */
+.hero-right-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-card-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-xl);
+  overflow: visible;
+}
+
+.avatar-backdrop-glow {
+  position: absolute;
+  inset: -15px;
+  background: var(--grad-imperial);
+  border-radius: calc(var(--radius-xl) + 10px);
+  filter: blur(28px);
+  opacity: 0.45;
+  z-index: 0;
+  animation: pulseDot 4s infinite alternate;
+}
+
+.hero-avatar-image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--border-glow);
+  box-shadow: var(--shadow-3d);
+}
+
+.floating-badge {
+  position: absolute;
+  z-index: 2;
+  background: rgba(36, 0, 70, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glow);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 12px 30px rgba(3, 7, 30, 0.8);
+  animation: floatBadge 6s ease-in-out infinite alternate;
+}
+
+.badge-top-right {
+  top: -15px;
+  right: -20px;
+}
+
+.badge-bottom-left {
+  bottom: -15px;
+  left: -20px;
+  animation-delay: -3s;
+}
+
+@keyframes floatBadge {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+.floating-badge .badge-icon {
+  font-size: 1.4rem;
+}
+
+.floating-badge strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #fff;
+}
+
+.floating-badge small {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--c-secondary);
+}
+
+/* Stats Banner Section (Sample 1 Style) */
+.stats-banner-section {
+  padding: 20px 0 50px;
+}
+
+.stats-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .stats-banner-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.stat-banner-card {
+  background: var(--c-dark-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px 18px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.stat-banner-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-glow);
+  background: rgba(56, 4, 105, 0.5);
+}
+
+.stat-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(224, 170, 255, 0.12);
+  color: var(--c-cta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin: 0 auto 12px;
+}
+
+.stat-numbers {
+  font-family: var(--font-brand);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Downloader Chamber Box */
 .chamber-outer {
   max-width: 860px;
   margin: 0 auto;
@@ -774,6 +1083,11 @@ h1, h2, h3, h4 {
   letter-spacing: 0.05em;
 }
 
+.format-chip.photo {
+  background: rgba(251, 176, 45, 0.2);
+  color: var(--c-cta);
+}
+
 .stream-quality-name {
   font-size: 0.98rem;
   font-weight: 700;
@@ -789,6 +1103,11 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-xs);
   margin-left: 8px;
   text-transform: uppercase;
+}
+
+.gold-badge.ultra {
+  background: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
+  color: #fff;
 }
 
 .btn-stream-download {
