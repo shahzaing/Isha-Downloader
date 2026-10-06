@@ -1,8 +1,7 @@
 // Stream / Download proxy for Isha Video Downloader
-// Developed by Isha Zahid
+// Forces Content-Disposition attachment so browser saves to disk instead of playing
 
-async function handleDownloadProxy(req, res) {
-  // CORS
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
 
@@ -10,30 +9,35 @@ async function handleDownloadProxy(req, res) {
     return res.status(200).end();
   }
 
-  try {
-    const fileUrl = req.query.url;
-    const filename = req.query.filename || `IshaDownloader_${Date.now()}.mp4`;
-    const ext = req.query.ext || 'mp4';
+  const fileUrl = req.query.url;
+  const filename = req.query.filename || `Isha_Download_${Date.now()}`;
+  const ext = req.query.ext || 'mp4';
 
-    if (!fileUrl) {
-      return res.status(400).json({ error: 'URL is required for download proxy' });
-    }
-
-    const cleanFilename = filename.endsWith(`.${ext}`) ? filename : `${filename}.${ext}`;
-
-    if (!fileUrl.startsWith('http')) {
-      return res.status(400).json({ error: 'Invalid URL provided' });
-    }
-
-    // Direct 302 redirect for maximum speed and zero memory overhead on Vercel
-    return res.redirect(302, fileUrl);
-  } catch (err) {
-    if (req.query.url) {
-      return res.redirect(302, req.query.url);
-    }
-    return res.status(500).json({ error: 'Failed to process media download' });
+  if (!fileUrl) {
+    return res.status(400).json({ error: 'URL parameter is required.' });
   }
-}
 
-module.exports = handleDownloadProxy;
-module.exports.handleDownloadProxy = handleDownloadProxy;
+  const cleanFilename = filename.endsWith(`.${ext}`) ? filename : `${filename}.${ext}`;
+
+  try {
+    const upstream = await fetch(fileUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+
+    if (!upstream.ok) {
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
+      return res.redirect(302, fileUrl);
+    }
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
+
+    const arrayBuffer = await upstream.arrayBuffer();
+    return res.send(Buffer.from(arrayBuffer));
+  } catch (err) {
+    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
+    return res.redirect(302, fileUrl);
+  }
+};

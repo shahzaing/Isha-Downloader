@@ -393,6 +393,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const isDirect = item.direct || item.url.startsWith('https://i.pinimg.com') || item.url.startsWith('https://i.ytimg.com');
         const targetLink = isDirect ? item.url : item.url;
 
+        const rowBtn = document.createElement('button');
+        rowBtn.type = 'button';
+        rowBtn.className = `btn-stream-download ${isPhoto ? 'photo-btn' : ''}`;
+        rowBtn.innerHTML = `<span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>`;
+
+        rowBtn.addEventListener('click', async () => {
+          await forceDownloadFile(item.url, `${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`, rowBtn, isPhoto || item.direct);
+        });
+
         row.innerHTML = `
           <div class="stream-meta">
             <span class="format-chip ${isPhoto ? 'photo' : ''}">${formatLabel}</span>
@@ -404,21 +413,63 @@ document.addEventListener('DOMContentLoaded', () => {
               <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'High Speed Server'}</small>
             </div>
           </div>
-          <a href="${targetLink}" target="_blank" rel="noopener noreferrer" class="btn-stream-download ${isDirect ? 'btn-direct-download' : ''}" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : 'mp4')}">
-            <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
-          </a>
         `;
 
+        row.appendChild(rowBtn);
         downloadOptionsContainer.appendChild(row);
       });
     } else {
       downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.95rem;">No direct download formats available. Please try another link.</p>`;
     }
 
-
     resultCard.classList.add('active');
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+
+  // Force Direct Device Download (Saves to Phone Gallery / PC Downloads Folder)
+  async function forceDownloadFile(fileUrl, filename, btnElement, isDirect) {
+    const originalHtml = btnElement.innerHTML;
+    btnElement.innerHTML = `<span>⏳ Downloading...</span>`;
+    btnElement.disabled = true;
+
+    try {
+      if (isDirect || fileUrl.startsWith('https://i.pinimg.com') || fileUrl.startsWith('https://i.ytimg.com')) {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+          a.remove();
+        }, 1000);
+        showToast('Saved to device successfully! 🎉', 'success');
+      } else {
+        // Direct download proxy or engine tab
+        const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&filename=${encodeURIComponent(filename)}`;
+        const a = document.createElement('a');
+        a.href = proxyUrl;
+        a.target = '_blank';
+        a.setAttribute('download', filename);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showToast('Download started! Check your downloads. 📥', 'success');
+      }
+    } catch (err) {
+      console.warn('Fallback direct window download', err);
+      window.open(fileUrl, '_blank');
+      showToast('Opening download link... 📥', 'info');
+    } finally {
+      btnElement.innerHTML = originalHtml;
+      btnElement.disabled = false;
+    }
+  }
+
 
   // 8. Contact Isha Button
   const btnContactIsha = document.getElementById('btnContactIsha');
