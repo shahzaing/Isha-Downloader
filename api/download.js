@@ -1,7 +1,15 @@
 // Stream / Download proxy for Isha Video Downloader
-// Forces Content-Disposition headers for direct mobile and desktop downloads
+// Developed by Isha Zahid
 
 async function handleDownloadProxy(req, res) {
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
     const fileUrl = req.query.url;
     const filename = req.query.filename || `IshaDownloader_${Date.now()}.mp4`;
@@ -13,39 +21,19 @@ async function handleDownloadProxy(req, res) {
 
     const cleanFilename = filename.endsWith(`.${ext}`) ? filename : `${filename}.${ext}`;
 
-    // Fetch upstream media
-    const upstreamRes = await fetch(fileUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    });
-
-    if (!upstreamRes.ok) {
-      return res.redirect(fileUrl);
+    if (!fileUrl.startsWith('http')) {
+      return res.status(400).json({ error: 'Invalid URL provided' });
     }
 
-    const contentType = upstreamRes.headers.get('content-type') || (ext === 'mp3' ? 'audio/mpeg' : 'video/mp4');
-    const contentLength = upstreamRes.headers.get('content-length');
-
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
-    if (contentLength) {
-      res.setHeader('Content-Length', contentLength);
-    }
-
-    // Stream response
-    const arrayBuffer = await upstreamRes.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    return res.send(buffer);
+    // Direct 302 redirect for maximum speed and zero memory overhead on Vercel
+    return res.redirect(302, fileUrl);
   } catch (err) {
-    console.error('Download stream error:', err.message);
     if (req.query.url) {
-      return res.redirect(req.query.url);
+      return res.redirect(302, req.query.url);
     }
     return res.status(500).json({ error: 'Failed to process media download' });
   }
 }
 
-module.exports = {
-  handleDownloadProxy
-};
+module.exports = handleDownloadProxy;
+module.exports.handleDownloadProxy = handleDownloadProxy;

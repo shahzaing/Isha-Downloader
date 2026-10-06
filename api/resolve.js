@@ -781,7 +781,49 @@ async function resolveMedia(url) {
   };
 }
 
-module.exports = {
-  detectPlatform,
-  resolveMedia
-};
+async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  let url = '';
+  if (req.body && req.body.url) {
+    url = req.body.url;
+  } else if (req.query && req.query.url) {
+    url = req.query.url;
+  } else if (typeof req.body === 'string') {
+    try {
+      const parsed = JSON.parse(req.body);
+      url = parsed.url;
+    } catch (e) {}
+  }
+
+  if (!url) {
+    return res.status(400).json({ success: false, error: 'Please enter a valid video link' });
+  }
+
+  try {
+    const mediaInfo = await resolveMedia(url);
+    return res.status(200).json(mediaInfo);
+  } catch (error) {
+    console.error('Resolve API Error:', error.message);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Unable to download this media. Please ensure the link is public.'
+    });
+  }
+}
+
+module.exports = handler;
+module.exports.handler = handler;
+module.exports.detectPlatform = detectPlatform;
+module.exports.resolveMedia = resolveMedia;
+
