@@ -1,0 +1,25 @@
+{
+  "name": "isha-video-downloader",
+  "version": "1.0.0",
+  "description": "Professional All-in-One Social Media Video Downloader by Isha Zahid",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "video-downloader",
+    "instagram-downloader",
+    "tiktok-downloader",
+    "youtube-downloader",
+    "facebook-downloader",
+    "isha-zahid"
+  ],
+  "author": "Isha Zahid",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
