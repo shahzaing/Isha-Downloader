@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lower.includes('facebook.com') || lower.includes('fb.watch') || lower.includes('fb.com')) return { name: 'Facebook', class: 'facebook', icon: '📘' };
     if (lower.includes('twitter.com') || lower.includes('x.com')) return { name: 'Twitter / X', class: 'twitter', icon: '🐦' };
     if (lower.includes('pinterest.com') || lower.includes('pin.it')) return { name: 'Pinterest', class: 'pinterest', icon: '📌' };
-    if (lower.includes('reddit.com')) return { name: 'Reddit', class: 'reddit', icon: '🤖' };
+    if (lower.includes('reddit.com') || lower.includes('redd.it')) return { name: 'Reddit', class: 'reddit', icon: '🤖' };
     return null;
   }
 
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const platform = checkUrlPlatform(val);
       if (platform) {
         badgeTag.textContent = `${platform.icon} ${platform.name}`;
-        badgeTag.className = `badge-tag ${platform.class}`;
+        badgeTag.className = `dynamic-tag ${platform.class}`;
         platformBadge.classList.add('active');
       } else {
         platformBadge.classList.remove('active');
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
           videoInput.value = text.trim();
           updateInputUI();
           showToast('Link pasted from clipboard! 📋', 'success');
-          // Auto trigger fetch if valid link
           if (text.startsWith('http')) {
             fetchMedia();
           }
@@ -75,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {
       videoInput.focus();
-      showToast('Clipboard access was blocked. Please paste manually.', 'info');
+      showToast('Please paste the link into the box.', 'info');
     }
   });
 
@@ -117,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingState.classList.add('active');
     resultCard.classList.remove('active');
     btnFetch.disabled = true;
-    btnFetch.innerHTML = '<span>Fetching Video...</span>';
+    btnFetch.innerHTML = '<span>⚡ Processing...</span>';
 
     try {
       const response = await fetch('/api/resolve', {
@@ -133,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       renderResult(data);
-      showToast('Video processed successfully! 🎉', 'success');
+      showToast('Video ready for download! 🎉', 'success');
     } catch (err) {
       console.error(err);
       showToast(err.message || 'Could not fetch video. Verify the link is public.', 'error');
@@ -148,9 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderResult(data) {
     resultTitle.textContent = data.title || 'Social Media Video';
     resultAuthor.textContent = data.author ? `By ${data.author}` : 'Public Video';
-    resultPlatform.textContent = data.platform || 'HD Media';
+    resultPlatform.innerHTML = `<i class="fa-solid fa-play"></i> ${data.platform || 'Media'}`;
 
-    // Thumbnail fallback
     if (data.thumbnail) {
       resultThumb.src = data.thumbnail;
       resultThumb.style.display = 'block';
@@ -165,13 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
       resultDuration.style.display = 'none';
     }
 
-    // Render download links
     downloadOptionsContainer.innerHTML = '';
 
     if (data.downloads && data.downloads.length > 0) {
-      data.downloads.forEach((item, index) => {
+      data.downloads.forEach((item) => {
         const row = document.createElement('div');
-        row.className = 'download-row';
+        row.className = 'stream-row';
 
         const isAudio = item.type === 'audio' || item.ext === 'mp3';
         const isPhoto = item.type === 'photo';
@@ -181,21 +178,20 @@ document.addEventListener('DOMContentLoaded', () => {
           .replace(/[^a-zA-Z0-9_-]/g, '_')
           .slice(0, 30);
         
-        // Proxy download link for reliable saving
         const proxyDownloadUrl = `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || 'mp4'}`;
 
         row.innerHTML = `
-          <div class="download-info">
-            <span class="download-format-badge">${formatLabel}</span>
+          <div class="stream-meta">
+            <span class="format-chip">${formatLabel}</span>
             <div>
-              <div class="download-quality-title">
+              <div class="stream-quality-name">
                 ${item.quality || 'High Quality'}
-                ${item.badge ? `<span class="download-badge-recom">${item.badge}</span>` : ''}
+                ${item.badge ? `<span class="gold-badge">${item.badge}</span>` : ''}
               </div>
-              <small style="color: var(--text-dim); font-size: 0.78rem;">${item.resolution || 'Direct Stream'}</small>
+              <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed CDN'}</small>
             </div>
           </div>
-          <a href="${proxyDownloadUrl}" class="btn-download-action" download="${cleanSafeName}.${item.ext || 'mp4'}">
+          <a href="${proxyDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || 'mp4'}">
             <span>📥 Download</span>
           </a>
         `;
@@ -203,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadOptionsContainer.appendChild(row);
       });
     } else {
-      downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">No direct download formats available. Please try another link.</p>`;
+      downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.95rem;">No direct download formats available. Please try another link.</p>`;
     }
 
     resultCard.classList.add('active');
@@ -213,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 7. Toast Notifications
   function showToast(message, type = 'info') {
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast-bubble toast-${type}`;
     
     let icon = 'ℹ️';
     if (type === 'success') icon = '✅';
@@ -231,14 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 8. FAQ Accordion Toggle
-  const faqQuestions = document.querySelectorAll('.faq-question');
-  faqQuestions.forEach(btn => {
+  const faqTriggers = document.querySelectorAll('.faq-trigger-btn');
+  faqTriggers.forEach(btn => {
     btn.addEventListener('click', () => {
       const parent = btn.parentElement;
       const isActive = parent.classList.contains('active');
 
-      // Close all others
-      document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.faq-card-unit').forEach(item => item.classList.remove('active'));
 
       if (!isActive) {
         parent.classList.add('active');
@@ -246,11 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 9. Platform chips click
-  document.querySelectorAll('.platform-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
+  // 9. Interactive Platform Pills
+  document.querySelectorAll('.platform-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const name = pill.textContent.trim();
       videoInput.focus();
-      showToast(`Copy and paste any ${chip.textContent.trim()} link here! 🚀`, 'info');
+      showToast(`Ready for ${name}! Copy and paste your link above. 🚀`, 'info');
     });
   });
 });
