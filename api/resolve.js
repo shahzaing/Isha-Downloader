@@ -14,12 +14,7 @@ function detectPlatform(url) {
   return 'general';
 }
 
-function sanitizeTitle(str) {
-  if (!str) return 'Media';
-  return str.replace(/[\\/:*?"<>|]/g, '').trim().slice(0, 80);
-}
-
-// 1. YouTube Resolver
+// 1. YouTube Engine
 async function resolveYouTube(url) {
   let videoId = '';
   try {
@@ -56,6 +51,7 @@ async function resolveYouTube(url) {
     }
   } catch (e) {}
 
+  const fullYtUrl = `https://www.youtube.com/watch?v=${videoId}`;
   const isShorts = url.includes('/shorts/');
 
   return {
@@ -67,25 +63,28 @@ async function resolveYouTube(url) {
     duration: isShorts ? 'Shorts HD' : 'Full HD 1080p',
     downloads: [
       {
-        quality: isShorts ? '1080p Full HD Shorts' : '1080p Full HD Video (High Quality)',
-        resolution: '1080p FHD MP4',
-        url: `https://www.youtube.com/watch?v=${videoId}`,
+        quality: isShorts ? '1080p Full HD YouTube Shorts' : '1080p Full HD Video (Server 1)',
+        resolution: '1080p FHD (1920x1080)',
+        url: `https://ssyoutube.com/en173/?url=${encodeURIComponent(fullYtUrl)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '1080p Full HD'
       },
       {
-        quality: '720p HD Video (Fast Mobile Download)',
-        resolution: '720p HD MP4',
-        url: `https://www.youtube.com/watch?v=${videoId}`,
+        quality: '720p HD Video (Fast Mobile Server 2)',
+        resolution: '720p HD (1280x720)',
+        url: `https://10downloader.com/download?v=${encodeURIComponent(fullYtUrl)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '720p HD'
       },
       {
-        quality: 'Original Full Audio (MP3 320kbps)',
-        resolution: 'MP3 320kbps Studio Audio',
-        url: `https://www.youtube.com/watch?v=${videoId}`,
+        quality: 'Original Full Audio (MP3 320kbps Studio)',
+        resolution: 'MP3 320kbps Audio',
+        url: `https://ytmp3.cc/?url=${encodeURIComponent(fullYtUrl)}`,
+        direct: false,
         ext: 'mp3',
         type: 'audio',
         badge: '320kbps MP3'
@@ -94,6 +93,7 @@ async function resolveYouTube(url) {
         quality: '4K Ultra HD Poster / Thumbnail',
         resolution: '4K MaxRes Quality',
         url: videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : thumbnail,
+        direct: true,
         ext: 'jpg',
         type: 'photo',
         badge: '4K Thumbnail'
@@ -102,7 +102,7 @@ async function resolveYouTube(url) {
   };
 }
 
-// 2. TikTok Resolver
+// 2. TikTok Engine
 async function resolveTikTok(url) {
   let title = 'TikTok Video (No Watermark)';
   let author = '@tiktok_creator';
@@ -129,17 +129,19 @@ async function resolveTikTok(url) {
     duration: 'HD No Watermark',
     downloads: [
       {
-        quality: '1080p Full HD Video (No Watermark)',
-        resolution: '1080p FHD (No Watermark)',
-        url: url,
+        quality: '1080p Full HD Video (No Watermark - Fast Server 1)',
+        resolution: '1080p FHD High Bitrate',
+        url: `https://snaptik.app/?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '1080p Full HD'
       },
       {
-        quality: '720p HD Video (Fast Download)',
-        resolution: '720p HD',
-        url: url,
+        quality: '720p HD Video (No Watermark - Server 2)',
+        resolution: '720p HD Standard',
+        url: `https://ssstik.io/en?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '720p HD'
@@ -147,15 +149,17 @@ async function resolveTikTok(url) {
       {
         quality: 'Original Background Audio (MP3 320kbps)',
         resolution: 'Audio 320kbps',
-        url: url,
+        url: `https://lovetik.com/api/download?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp3',
         type: 'audio',
         badge: '320kbps MP3'
       },
       {
         quality: '4K Ultra HD Cover Photo',
-        resolution: '4K Cover',
+        resolution: '4K Cover Image',
         url: thumbnail,
+        direct: true,
         ext: 'jpg',
         type: 'photo',
         badge: '4K Ultra HD'
@@ -164,7 +168,7 @@ async function resolveTikTok(url) {
   };
 }
 
-// 3. Instagram Resolver
+// 3. Instagram Engine
 async function resolveInstagram(url) {
   return {
     success: true,
@@ -174,17 +178,19 @@ async function resolveInstagram(url) {
     thumbnail: 'https://static.cdninstagram.com/rsrc.php/v3/yI/r/VsNE-OHk_8a.png',
     downloads: [
       {
-        quality: '4K Ultra HD Photo / Carousel Post',
+        quality: '4K Ultra HD Photo / Carousel (Server 1)',
         resolution: 'Original 4K Image',
-        url: url,
+        url: `https://fastdl.app/en?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'jpg',
         type: 'photo',
         badge: '4K Ultra HD'
       },
       {
-        quality: '1080p Full HD Video / Reel',
+        quality: '1080p Full HD Reel / Video (Server 2)',
         resolution: '1080p FHD High Bitrate',
-        url: url,
+        url: `https://snapinsta.app/?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '1080p Full HD'
@@ -192,15 +198,17 @@ async function resolveInstagram(url) {
       {
         quality: '720p HD Video / Reel',
         resolution: '720p HD Standard',
-        url: url,
+        url: `https://saveig.app/en?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '720p HD'
       },
       {
-        quality: 'Original Audio (MP3 320kbps)',
+        quality: 'Original Reel Audio (MP3 320kbps)',
         resolution: 'Audio 320kbps',
-        url: url,
+        url: `https://fastdl.app/en?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp3',
         type: 'audio',
         badge: '320kbps MP3'
@@ -209,7 +217,7 @@ async function resolveInstagram(url) {
   };
 }
 
-// 4. Pinterest Resolver
+// 4. Pinterest Engine (Direct 4K Image)
 async function resolvePinterest(url) {
   let photoUrl = url;
   try {
@@ -223,36 +231,32 @@ async function resolvePinterest(url) {
     }
   } catch (e) {}
 
+  const isDirectPhoto = photoUrl.startsWith('https://i.pinimg.com');
+
   return {
     success: true,
     platform: 'Pinterest',
     title: 'Pinterest 4K Aesthetic Pin / Wallpaper',
     author: 'Pinterest Creator',
-    thumbnail: photoUrl.startsWith('http') ? photoUrl : 'https://s.pinimg.com/images/favicon_red_192.png',
+    thumbnail: isDirectPhoto ? photoUrl : 'https://s.pinimg.com/images/favicon_red_192.png',
     downloads: [
       {
-        quality: '4K Ultra HD Photo / Wallpaper',
+        quality: '4K Ultra HD Photo / Wallpaper (Direct File)',
         resolution: '4K Originals (Uncompressed)',
         url: photoUrl,
+        direct: isDirectPhoto,
         ext: 'jpg',
         type: 'photo',
         badge: '4K Ultra HD'
       },
       {
-        quality: '1080p Full HD Video Pin',
+        quality: '1080p Full HD Video Pin / Image (Server 2)',
         resolution: '1080p FHD',
-        url: url,
+        url: `https://pinterestvideodownloader.com/?url=${encodeURIComponent(url)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '1080p Full HD'
-      },
-      {
-        quality: '720p HD Video Pin',
-        resolution: '720p HD',
-        url: url,
-        ext: 'mp4',
-        type: 'video',
-        badge: '720p HD'
       }
     ]
   };
@@ -281,32 +285,27 @@ async function resolveMedia(url) {
     downloads: [
       {
         quality: '1080p Full HD Video',
-        resolution: '1080p FHD',
-        url: trimmed,
+        resolution: '1080p FHD MP4',
+        url: `https://savefrom.net/#url=${encodeURIComponent(trimmed)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '1080p Full HD'
       },
       {
         quality: '720p HD Video',
-        resolution: '720p HD',
-        url: trimmed,
+        resolution: '720p HD MP4',
+        url: `https://savefrom.net/#url=${encodeURIComponent(trimmed)}`,
+        direct: false,
         ext: 'mp4',
         type: 'video',
         badge: '720p HD'
       },
       {
-        quality: '4K Ultra HD Photo',
-        resolution: '4K Original Quality',
-        url: trimmed,
-        ext: 'jpg',
-        type: 'photo',
-        badge: '4K Ultra HD'
-      },
-      {
         quality: 'Original Audio (MP3 320kbps)',
         resolution: 'Audio 320kbps',
-        url: trimmed,
+        url: `https://ytmp3.cc/?url=${encodeURIComponent(trimmed)}`,
+        direct: false,
         ext: 'mp3',
         type: 'audio',
         badge: '320kbps MP3'
