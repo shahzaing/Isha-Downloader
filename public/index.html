@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   
-  <!-- SEO & Aesthetic Branding Meta -->
+  <!-- SEO & Mobile Optimization Meta -->
   <title>Isha Video Downloader - 4K Photos & 1080p/720p HD Social Media Downloader ♡</title>
-  <meta name="description" content="Aesthetic Social Media Downloader. Save 4K Photos & 1080p/720p HD Videos from Instagram, TikTok (no watermark), Pinterest, YouTube Shorts, and Facebook. Developed by Isha Zahid.">
-  <meta name="keywords" content="isha video downloader, isha zahid, instagram 4k photo download, pinterest 4k wallpaper, tiktok no watermark, 1080p video downloader">
+  <meta name="description" content="Aesthetic Social Media Downloader for Mobile & Desktop. Save 4K Photos & 1080p/720p HD Videos from Instagram, TikTok (no watermark), Pinterest, YouTube Shorts, and Facebook. Developed by Isha Zahid.">
+  <meta name="keywords" content="isha video downloader, mobile video downloader, instagram 4k photo download, pinterest 4k wallpaper, tiktok no watermark, 1080p video downloader">
   <meta name="author" content="Isha Zahid">
+  <meta name="theme-color" content="#240046">
 
   <!-- OpenGraph Social Sharing -->
   <meta property="og:title" content="isha. ♡ - 4K Photo & HD Video Downloader">
-  <meta property="og:description" content="Download 4K Instagram & Pinterest photos, TikTok without watermark, and 1080p/720p HD videos.">
+  <meta property="og:description" content="Download 4K Instagram & Pinterest photos, TikTok without watermark, and 1080p/720p HD videos directly on your phone.">
   <meta property="og:type" content="website">
   
   <!-- Favicon & Stylesheet -->
@@ -31,6 +32,7 @@
         <span class="brand-script-logo">isha.<span class="heart-icon">♡</span></span>
       </a>
 
+      <!-- Desktop Nav Menu -->
       <ul class="nav-menu">
         <li><a href="#hero" class="nav-item-link active">Home</a></li>
         <li><a href="#downloader" class="nav-item-link">Downloader</a></li>
@@ -38,6 +40,11 @@
         <li><a href="#about-me" class="nav-item-link">About</a></li>
         <li><a href="#faq" class="nav-item-link">FAQ</a></li>
       </ul>
+
+      <!-- Mobile Quick CTA Button in Header -->
+      <a href="#downloader" class="btn-header-mobile">
+        <i class="fa-solid fa-cloud-arrow-down"></i> Download
+      </a>
     </div>
   </header>
 
@@ -106,7 +113,7 @@
 
         <div class="downloader-ananya-box">
           
-          <!-- Interactive Platform Switcher Tabs -->
+          <!-- Interactive Platform Switcher Tabs (Scrollable on Mobile) -->
           <div class="platform-tabs-nav" id="platformTabsNav">
             <button type="button" class="tab-btn active" data-tab="all">
               <i class="fa-solid fa-globe"></i> All-in-One
@@ -135,10 +142,10 @@
           <div class="platform-mode-banner" id="platformModeBanner">
             <div class="mode-info">
               <span class="mode-badge" id="modeBadge">Universal Mode</span>
-              <span class="mode-text" id="modeText">Paste any social media link below to fetch 4K photos or HD videos.</span>
+              <span class="mode-text" id="modeText">Paste any link below for 4K photos or HD videos.</span>
             </div>
             <button type="button" class="btn-demo-test" id="btnDemoTest" title="Try sample test link">
-              <i class="fa-solid fa-vial"></i> Test Sample Link
+              <i class="fa-solid fa-vial"></i> Test Link
             </button>
           </div>
 
@@ -150,7 +157,7 @@
                 type="text" 
                 id="videoUrlInput" 
                 class="main-input" 
-                placeholder="Paste Instagram, TikTok, Pinterest, YouTube, or FB link here..."
+                placeholder="Paste Instagram, TikTok, Pinterest, YouTube link..."
                 autocomplete="off"
                 spellcheck="false"
               >
@@ -171,7 +178,7 @@
 
           <!-- Dynamic Live Platform Badge -->
           <div class="live-platform-detect" id="platformBadge">
-            <span style="color: var(--text-muted); font-size: 0.85rem;">Detected Media:</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Detected:</span>
             <span class="dynamic-tag" id="badgeTag">TikTok</span>
           </div>
 
@@ -180,7 +187,7 @@
         <!-- Hologram Loader State -->
         <div class="hologram-loader" id="loadingState">
           <div class="hologram-spinner"></div>
-          <p style="color: var(--c-secondary); font-weight: 700; letter-spacing: 0.02em;">
+          <p style="color: var(--c-secondary); font-weight: 700; font-size: 0.9rem; text-align: center;">
             Extracting 4K Photos, 1080p/720p HD streams & CDN tokens...
           </p>
         </div>
@@ -199,7 +206,7 @@
             </div>
           </div>
 
-          <!-- Download Streams Grid with 4K Photos, 1080p and 720p -->
+          <!-- Download Streams Grid -->
           <div class="downloads-list-title">Choose Download Option:</div>
           <div class="download-streams-grid" id="downloadOptions">
             <!-- Rendered Dynamically -->
@@ -224,7 +231,7 @@
             <span class="card-num-badge">01</span>
             <div class="card-social-icon" style="color: #f43f5e;"><i class="fa-brands fa-instagram"></i></div>
             <h3>Instagram 4K Photos & Reels</h3>
-            <p>Save single photos, carousel posts, and viral reels in high-res 1080p/4K directly to your gallery.</p>
+            <p>Save single photos, carousel posts, and viral reels in high-res 1080p/4K directly to your phone.</p>
             <span class="btn-card-arrow">&rarr;</span>
           </div>
 
@@ -301,7 +308,7 @@
               <div class="sub-feature-item">
                 <div class="sub-feature-icon"><i class="fa-solid fa-bolt"></i></div>
                 <h4>High-Speed CDN</h4>
-                <p>Direct pipe streaming that extracts high-speed media without slowdowns.</p>
+                <p>Direct pipe streaming that extracts media without slowdowns.</p>
               </div>
 
               <div class="sub-feature-item">
@@ -319,7 +326,7 @@
               <div class="sub-feature-item">
                 <div class="sub-feature-icon"><i class="fa-solid fa-heart"></i></div>
                 <h4>Free & Safe</h4>
-                <p>No login, no sign-up, and no hidden limitations. 100% private.</p>
+                <p>No login, no sign-up, and 100% private.</p>
               </div>
             </div>
 
@@ -340,11 +347,11 @@
         <div class="faq-accordion-stack">
           <div class="faq-card-unit active">
             <button type="button" class="faq-trigger-btn">
-              <span>📱 How to save 4K Photos & Videos on iPhone (iOS Safari)?</span>
+              <span>📱 How to save on iPhone (iOS Safari)?</span>
               <i class="fa-solid fa-chevron-down faq-arrow"></i>
             </button>
             <div class="faq-body-content">
-              Tap the <strong>Download</strong> button. Safari will display a download prompt. Tap <strong>Download</strong>. Once finished, tap the blue download arrow in Safari's address bar, tap the downloaded photo/video, tap the Share icon, and select <strong>"Save Image"</strong> or <strong>"Save Video"</strong> to save directly into your Apple Photos library.
+              Tap the <strong>Download</strong> button. Safari will ask to download. Once finished, tap the blue download arrow in Safari's address bar, tap the file, tap the Share icon, and select <strong>"Save Image"</strong> or <strong>"Save Video"</strong> to save to your Photos app.
             </div>
           </div>
 
@@ -360,17 +367,17 @@
 
           <div class="faq-card-unit">
             <button type="button" class="faq-trigger-btn">
-              <span>🎬 What is the difference between 1080p FHD and 720p HD?</span>
+              <span>🎬 1080p FHD vs 720p HD options?</span>
               <i class="fa-solid fa-chevron-down faq-arrow"></i>
             </button>
             <div class="faq-body-content">
-              <strong>1080p Full HD</strong> provides the highest crisp resolution and bitrate for large screens and high-quality viewing. <strong>720p HD</strong> provides great clarity with a smaller file size for fast downloading and data saving.
+              <strong>1080p Full HD</strong> gives the highest crisp resolution and bitrate. <strong>720p HD</strong> provides great clarity with a smaller file size for fast downloading.
             </div>
           </div>
 
           <div class="faq-card-unit">
             <button type="button" class="faq-trigger-btn">
-              <span>📸 Can I download Instagram Multi-Photo Carousels and Pinterest Pins?</span>
+              <span>📸 Can I download Instagram Carousels and Pinterest Pins?</span>
               <i class="fa-solid fa-chevron-down faq-arrow"></i>
             </button>
             <div class="faq-body-content">
@@ -392,6 +399,30 @@
       </p>
     </div>
   </footer>
+
+  <!-- App-like Mobile Bottom Navigation Dock (Phones Only) -->
+  <nav class="mobile-bottom-nav">
+    <a href="#hero" class="mobile-nav-link active">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="#downloader" class="mobile-nav-link">
+      <i class="fa-solid fa-cloud-arrow-down"></i>
+      <span>Download</span>
+    </a>
+    <a href="#featured-apps" class="mobile-nav-link">
+      <i class="fa-solid fa-shapes"></i>
+      <span>Apps</span>
+    </a>
+    <a href="#about-me" class="mobile-nav-link">
+      <i class="fa-solid fa-user"></i>
+      <span>About</span>
+    </a>
+    <a href="#faq" class="mobile-nav-link">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>FAQ</span>
+    </a>
+  </nav>
 
   <!-- Toast Alert Shelf -->
   <div class="toast-shelf" id="toastContainer"></div>
