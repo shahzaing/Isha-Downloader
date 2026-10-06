@@ -1,4 +1,4 @@
-// Direct Stream Download Proxy for Isha Video Downloader
+// Stream / Direct Download Proxy for Isha Video Downloader
 // Developed by Isha Zahid (Dentist & Creator)
 
 module.exports = async (req, res) => {
@@ -27,9 +27,7 @@ module.exports = async (req, res) => {
     });
 
     if (!upstreamRes.ok) {
-      res.setHeader('Content-Type', 'application/octet-stream');
-      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
-      return res.redirect(302, fileUrl);
+      return res.status(404).json({ error: 'Upstream media stream not available directly.' });
     }
 
     const contentType = upstreamRes.headers.get('content-type') || (ext === 'mp3' ? 'audio/mpeg' : (ext === 'jpg' ? 'image/jpeg' : 'video/mp4'));
@@ -44,8 +42,6 @@ module.exports = async (req, res) => {
     const arrayBuffer = await upstreamRes.arrayBuffer();
     return res.send(Buffer.from(arrayBuffer));
   } catch (err) {
-    res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
-    return res.redirect(302, fileUrl);
+    return res.status(500).json({ error: 'Failed to process media download.' });
   }
 };

@@ -390,7 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
           .replace(/[^a-zA-Z0-9_-]/g, '_')
           .slice(0, 30);
         
-        const proxyDownloadUrl = `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`;
+        const finalDownloadUrl = item.isLoader ? item.url : `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`;
+        const isExternalLoader = !!item.isLoader;
 
         row.innerHTML = `
           <div class="stream-meta">
@@ -403,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed Stream'}</small>
             </div>
           </div>
-          <a href="${proxyDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
+          <a href="${finalDownloadUrl}" ${isExternalLoader ? 'target="_blank" rel="noopener noreferrer"' : ''} class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
             <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
           </a>
         `;
@@ -413,6 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.95rem;">No direct download formats available. Please try another link.</p>`;
     }
+
 
 
     resultCard.classList.add('active');
