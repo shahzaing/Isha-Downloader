@@ -1,6 +1,17 @@
 // Multi-platform Media & 4K Photo Resolver for Isha Video Downloader
 // Developed by Isha Zahid (Dentist & Creator)
 
+const { spawn, spawnSync } = require('child_process');
+
+function hasYtDlp() {
+  try {
+    const res = spawnSync('yt-dlp', ['--version']);
+    return res.status === 0;
+  } catch (e) {
+    return false;
+  }
+}
+
 function detectPlatform(url) {
   if (!url || typeof url !== 'string') return 'unknown';
   const cleanUrl = url.toLowerCase();
@@ -14,7 +25,7 @@ function detectPlatform(url) {
   return 'general';
 }
 
-// 1. YouTube Full-Length & Shorts Engine
+// 1. YouTube Resolver (Universal: yt-dlp on Server/Docker + Fast Fallback)
 async function resolveYouTube(url) {
   let videoId = '';
   try {
@@ -55,6 +66,45 @@ async function resolveYouTube(url) {
   const isShorts = url.includes('/shorts/');
   const maxThumbnail = videoId ? `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` : thumbnail;
 
+  const downloads = [
+    {
+      quality: isShorts ? '1080p Full HD YouTube Shorts' : '1080p Full HD Video (.MP4 Direct)',
+      resolution: '1080p FHD (1920x1080)',
+      url: `/api/download?sourceUrl=${encodeURIComponent(fullYtUrl)}&format=bestvideo[height<=1080]+bestaudio/best[height<=1080]/best&filename=${encodeURIComponent(title)}&ext=mp4`,
+      isExternal: false,
+      ext: 'mp4',
+      type: 'video',
+      badge: '1080p Full HD'
+    },
+    {
+      quality: '720p HD Video (.MP4 Fast Direct)',
+      resolution: '720p HD (1280x720)',
+      url: `/api/download?sourceUrl=${encodeURIComponent(fullYtUrl)}&format=bestvideo[height<=720]+bestaudio/best[height<=720]/best&filename=${encodeURIComponent(title)}&ext=mp4`,
+      isExternal: false,
+      ext: 'mp4',
+      type: 'video',
+      badge: '720p HD'
+    },
+    {
+      quality: 'Original Full Audio (MP3 320kbps Studio)',
+      resolution: 'MP3 320kbps Audio',
+      url: `/api/download?sourceUrl=${encodeURIComponent(fullYtUrl)}&format=bestaudio/best&filename=${encodeURIComponent(title)}&ext=mp3`,
+      isExternal: false,
+      ext: 'mp3',
+      type: 'audio',
+      badge: '320kbps MP3'
+    },
+    {
+      quality: '4K Ultra HD Poster / Thumbnail',
+      resolution: '4K MaxRes Quality',
+      url: `/api/download?url=${encodeURIComponent(maxThumbnail)}&filename=${encodeURIComponent(title + '_4K_Cover')}&ext=jpg`,
+      isExternal: false,
+      ext: 'jpg',
+      type: 'photo',
+      badge: '4K Thumbnail'
+    }
+  ];
+
   return {
     success: true,
     platform: 'YouTube',
@@ -62,44 +112,7 @@ async function resolveYouTube(url) {
     author: author,
     thumbnail: maxThumbnail,
     duration: isShorts ? 'Shorts HD' : 'Full HD 1080p',
-    downloads: [
-      {
-        quality: isShorts ? '1080p Full HD YouTube Shorts' : '1080p Full HD Video (Direct MP4)',
-        resolution: '1080p FHD (1920x1080)',
-        url: `https://loader.to/api/button/?url=${encodeURIComponent(fullYtUrl)}&f=1080`,
-        isLoader: true,
-        ext: 'mp4',
-        type: 'video',
-        badge: '1080p Full HD'
-      },
-      {
-        quality: '720p HD Video (Fast Direct MP4)',
-        resolution: '720p HD (1280x720)',
-        url: `https://loader.to/api/button/?url=${encodeURIComponent(fullYtUrl)}&f=720`,
-        isLoader: true,
-        ext: 'mp4',
-        type: 'video',
-        badge: '720p HD'
-      },
-      {
-        quality: 'Original Full Audio (MP3 320kbps Studio)',
-        resolution: 'MP3 320kbps Audio',
-        url: `https://loader.to/api/button/?url=${encodeURIComponent(fullYtUrl)}&f=mp3`,
-        isLoader: true,
-        ext: 'mp3',
-        type: 'audio',
-        badge: '320kbps MP3'
-      },
-      {
-        quality: '4K Ultra HD Poster / Thumbnail',
-        resolution: '4K MaxRes Quality',
-        url: maxThumbnail,
-        isLoader: false,
-        ext: 'jpg',
-        type: 'photo',
-        badge: '4K Thumbnail'
-      }
-    ]
+    downloads
   };
 }
 
@@ -117,13 +130,15 @@ async function resolveTikTok(url) {
     if (data && data.code === 0 && data.data) {
       const item = data.data;
       const downloads = [];
+      const title = item.title || 'TikTok Video by ' + (item.author?.nickname || 'Creator');
 
       if (item.images && Array.isArray(item.images)) {
         item.images.forEach((imgUrl, idx) => {
           downloads.push({
             quality: `4K Ultra HD Photo #${idx + 1}`,
             resolution: 'Original 4K Image',
-            url: imgUrl,
+            url: `/api/download?url=${encodeURIComponent(imgUrl)}&filename=${encodeURIComponent(title + '_photo_' + (idx + 1))}&ext=jpg`,
+            isExternal: false,
             ext: 'jpg',
             type: 'photo',
             badge: '4K Ultra HD'
@@ -137,7 +152,8 @@ async function resolveTikTok(url) {
         downloads.push({
           quality: '1080p Full HD Video (No Watermark)',
           resolution: '1080p FHD Direct MP4',
-          url: fullUrl,
+          url: `/api/download?url=${encodeURIComponent(fullUrl)}&filename=${encodeURIComponent(title)}&ext=mp4`,
+          isExternal: false,
           ext: 'mp4',
           type: 'video',
           badge: '1080p Full HD'
@@ -149,7 +165,8 @@ async function resolveTikTok(url) {
         downloads.push({
           quality: 'Original Background Audio (MP3 320kbps)',
           resolution: 'Audio 320kbps',
-          url: musicUrl,
+          url: `/api/download?url=${encodeURIComponent(musicUrl)}&filename=${encodeURIComponent(title + '_audio')}&ext=mp3`,
+          isExternal: false,
           ext: 'mp3',
           type: 'audio',
           badge: '320kbps MP3'
@@ -160,7 +177,7 @@ async function resolveTikTok(url) {
         return {
           success: true,
           platform: 'TikTok',
-          title: item.title || 'TikTok Video by ' + (item.author?.nickname || 'Creator'),
+          title: title,
           author: item.author?.nickname ? `@${item.author.unique_id} (${item.author.nickname})` : '@tiktok_user',
           thumbnail: item.cover || item.origin_cover,
           duration: item.duration ? `${item.duration}s` : 'HD Clip',
@@ -190,6 +207,7 @@ async function resolveInstagram(url) {
       if (items && items.length > 0) {
         const item = items[0];
         const downloads = [];
+        const title = item.caption?.text ? item.caption.text.slice(0, 80) : 'Instagram_Media';
 
         if (item.carousel_media && Array.isArray(item.carousel_media)) {
           item.carousel_media.forEach((cItem, idx) => {
@@ -198,7 +216,8 @@ async function resolveInstagram(url) {
               downloads.push({
                 quality: `4K Ultra HD Photo #${idx + 1}`,
                 resolution: 'Original 4K Image',
-                url: photoUrl,
+                url: `/api/download?url=${encodeURIComponent(photoUrl)}&filename=${encodeURIComponent(title + '_photo_' + (idx + 1))}&ext=jpg`,
+                isExternal: false,
                 ext: 'jpg',
                 type: 'photo',
                 badge: '4K Ultra HD'
@@ -209,7 +228,8 @@ async function resolveInstagram(url) {
           downloads.push({
             quality: '4K Ultra HD Photo / Post',
             resolution: 'Original 4K Image',
-            url: item.image_versions2.candidates[0].url,
+            url: `/api/download?url=${encodeURIComponent(item.image_versions2.candidates[0].url)}&filename=${encodeURIComponent(title)}&ext=jpg`,
+            isExternal: false,
             ext: 'jpg',
             type: 'photo',
             badge: '4K Ultra HD'
@@ -221,7 +241,8 @@ async function resolveInstagram(url) {
           downloads.push({
             quality: '1080p Full HD Video / Reel',
             resolution: '1080p FHD Direct MP4',
-            url: videoUrl,
+            url: `/api/download?url=${encodeURIComponent(videoUrl)}&filename=${encodeURIComponent(title)}&ext=mp4`,
+            isExternal: false,
             ext: 'mp4',
             type: 'video',
             badge: '1080p Full HD'
@@ -232,7 +253,7 @@ async function resolveInstagram(url) {
           return {
             success: true,
             platform: 'Instagram',
-            title: item.caption?.text ? item.caption.text.slice(0, 80) + '...' : 'Instagram Reel / Photo',
+            title: title,
             author: item.user?.username ? `@${item.user.username}` : '@instagram_creator',
             thumbnail: item.image_versions2 ? item.image_versions2.candidates[0]?.url : item.display_url,
             downloads
@@ -249,11 +270,15 @@ async function resolveInstagram(url) {
 async function resolvePinterest(url) {
   let photoUrl = url;
   let videoUrl = null;
+  let pageTitle = 'Pinterest 4K Media';
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
     });
     const html = await res.text();
+    const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+    if (titleMatch) pageTitle = titleMatch[1].replace(/ \| Pinterest.*/, '').trim();
+
     const imgMatch = html.match(/https:\/\/i\.pinimg\.com\/(?:originals|\d+x)\/[a-zA-Z0-9_\-\/]+\.(?:jpg|png|webp)/g);
     if (imgMatch && imgMatch.length > 0) {
       photoUrl = imgMatch[0].replace(/\/\d+x\//, '/originals/');
@@ -271,7 +296,8 @@ async function resolvePinterest(url) {
     downloads.push({
       quality: '4K Ultra HD Photo / Wallpaper (Direct File)',
       resolution: '4K Originals (Uncompressed)',
-      url: photoUrl,
+      url: `/api/download?url=${encodeURIComponent(photoUrl)}&filename=${encodeURIComponent(pageTitle)}&ext=jpg`,
+      isExternal: false,
       ext: 'jpg',
       type: 'photo',
       badge: '4K Ultra HD'
@@ -282,7 +308,8 @@ async function resolvePinterest(url) {
     downloads.push({
       quality: '1080p Full HD Video Pin (Direct MP4)',
       resolution: '1080p FHD Direct MP4',
-      url: videoUrl,
+      url: `/api/download?url=${encodeURIComponent(videoUrl)}&filename=${encodeURIComponent(pageTitle)}&ext=mp4`,
+      isExternal: false,
       ext: 'mp4',
       type: 'video',
       badge: '1080p Full HD'
@@ -291,106 +318,86 @@ async function resolvePinterest(url) {
 
   if (downloads.length === 0) {
     downloads.push({
-      quality: '4K Ultra HD Photo / Wallpaper',
-      resolution: '4K Originals',
-      url: photoUrl,
+      quality: 'Original Pinterest Media',
+      resolution: 'Original Format',
+      url: `/api/download?url=${encodeURIComponent(url)}&filename=Pinterest_Media&ext=jpg`,
+      isExternal: false,
       ext: 'jpg',
       type: 'photo',
-      badge: '4K Ultra HD'
+      badge: 'Original'
     });
   }
 
   return {
     success: true,
     platform: 'Pinterest',
-    title: 'Pinterest 4K Aesthetic Pin / Wallpaper',
+    title: pageTitle,
     author: 'Pinterest Creator',
-    thumbnail: isDirectPhoto ? photoUrl : 'https://s.pinimg.com/images/favicon_red_192.png',
+    thumbnail: photoUrl.startsWith('http') ? photoUrl : 'https://s.pinimg.com/webapp/favicon-54a5b2af.png',
     downloads
   };
 }
 
-// 5. Facebook HD Direct Engine
+// 5. Facebook Direct Engine
 async function resolveFacebook(url) {
+  let videoUrl = null;
+  let pageTitle = 'Facebook Video';
   try {
     const res = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate'
       }
     });
     const html = await res.text();
-    const downloads = [];
+    const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+    if (titleMatch) pageTitle = titleMatch[1].replace(/ \| Facebook.*/, '').trim();
 
-    const hdMatch = html.match(/browser_native_hd_url["']?\s*:\s*["']([^"']+)["']/i) || html.match(/playable_url_quality_hd["']?\s*:\s*["']([^"']+)["']/i);
-    const sdMatch = html.match(/browser_native_sd_url["']?\s*:\s*["']([^"']+)["']/i) || html.match(/playable_url["']?\s*:\s*["']([^"']+)["']/i);
+    const hdMatch = html.match(/browser_native_hd_url["']:\s*["']([^"']+)["']/);
+    const sdMatch = html.match(/browser_native_sd_url["']:\s*["']([^"']+)["']/);
 
-    if (hdMatch && hdMatch[1]) {
-      const hdUrl = hdMatch[1].replace(/\\/g, '');
-      downloads.push({
-        quality: '1080p Full HD Facebook Video (Direct MP4)',
-        resolution: '1080p FHD Direct MP4',
-        url: hdUrl,
-        ext: 'mp4',
-        type: 'video',
-        badge: '1080p Full HD'
-      });
-    }
-
-    if (sdMatch && sdMatch[1]) {
-      const sdUrl = sdMatch[1].replace(/\\/g, '');
-      downloads.push({
-        quality: '720p HD Facebook Video (Direct MP4)',
-        resolution: '720p HD Direct MP4',
-        url: sdUrl,
-        ext: 'mp4',
-        type: 'video',
-        badge: '720p HD'
-      });
-    }
-
-    if (downloads.length > 0) {
-      return {
-        success: true,
-        platform: 'Facebook',
-        title: 'Facebook Video / Reel',
-        author: 'Facebook Creator',
-        thumbnail: 'https://static.xx.fbcdn.net/rsrc.php/v3/y8/r/d9R9CPj8.png',
-        downloads
-      };
+    if (hdMatch) {
+      videoUrl = JSON.parse(`"${hdMatch[1]}"`);
+    } else if (sdMatch) {
+      videoUrl = JSON.parse(`"${sdMatch[1]}"`);
     }
   } catch (e) {}
 
-  return null;
+  const downloads = [];
+  if (videoUrl) {
+    downloads.push({
+      quality: '1080p Full HD Facebook Video',
+      resolution: '1080p FHD Direct MP4',
+      url: `/api/download?url=${encodeURIComponent(videoUrl)}&filename=${encodeURIComponent(pageTitle)}&ext=mp4`,
+      isExternal: false,
+      ext: 'mp4',
+      type: 'video',
+      badge: '1080p Full HD'
+    });
+  } else {
+    downloads.push({
+      quality: '1080p Full HD Video (.MP4 Direct)',
+      resolution: '1080p Direct MP4',
+      url: `/api/download?sourceUrl=${encodeURIComponent(url)}&format=bestvideo+bestaudio/best&filename=${encodeURIComponent(pageTitle)}&ext=mp4`,
+      isExternal: false,
+      ext: 'mp4',
+      type: 'video',
+      badge: '1080p Full HD'
+    });
+  }
+
+  return {
+    success: true,
+    platform: 'Facebook',
+    title: pageTitle,
+    author: 'Facebook Creator',
+    thumbnail: 'https://static.xx.fbcdn.net/rsrc.php/yD/r/d4ZIVX-5C6b.ico',
+    downloads
+  };
 }
 
-// Master Media Resolver
-async function resolveMedia(url) {
-  if (!url || typeof url !== 'string') {
-    throw new Error('Please provide a valid video link.');
-  }
-
-  const trimmed = url.trim();
-  const platform = detectPlatform(trimmed);
-
-  if (platform === 'youtube') return await resolveYouTube(trimmed);
-  if (platform === 'tiktok') {
-    const tt = await resolveTikTok(trimmed);
-    if (tt) return tt;
-  }
-  if (platform === 'instagram') {
-    const ig = await resolveInstagram(trimmed);
-    if (ig) return ig;
-  }
-  if (platform === 'pinterest') return await resolvePinterest(trimmed);
-  if (platform === 'facebook') {
-    const fb = await resolveFacebook(trimmed);
-    if (fb) return fb;
-  }
-
-  throw new Error('Could not extract direct stream for this link. Please ensure it is a public video or photo.');
-}
-
-// Vercel Serverless Function Handler
+// Master Handler
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -400,32 +407,56 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
-  let targetUrl = '';
+  const url = (req.body?.url || req.query?.url || '').trim();
+
+  if (!url) {
+    return res.status(400).json({ success: false, error: 'Please enter a valid video or photo URL.' });
+  }
+
+  const platform = detectPlatform(url);
+
   try {
-    if (req.body) {
-      if (typeof req.body === 'object' && req.body.url) {
-        targetUrl = req.body.url;
-      } else if (typeof req.body === 'string') {
-        const parsed = JSON.parse(req.body);
-        targetUrl = parsed.url;
+    let result = null;
+
+    if (platform === 'tiktok') {
+      result = await resolveTikTok(url);
+    } else if (platform === 'pinterest') {
+      result = await resolvePinterest(url);
+    } else if (platform === 'instagram') {
+      result = await resolveInstagram(url);
+    } else if (platform === 'facebook') {
+      result = await resolveFacebook(url);
+    } else if (platform === 'youtube') {
+      result = await resolveYouTube(url);
+    }
+
+    if (!result) {
+      // General fallback
+      if (platform === 'youtube') {
+        result = await resolveYouTube(url);
+      } else if (platform === 'tiktok') {
+        result = await resolveTikTok(url);
+      } else if (platform === 'pinterest') {
+        result = await resolvePinterest(url);
+      } else if (platform === 'facebook') {
+        result = await resolveFacebook(url);
+      } else {
+        result = await resolveYouTube(url);
       }
     }
-    if (!targetUrl && req.query && req.query.url) {
-      targetUrl = req.query.url;
+
+    if (result && result.success) {
+      return res.status(200).json(result);
     }
-  } catch (e) {}
 
-  if (!targetUrl) {
-    return res.status(400).json({ success: false, error: 'URL parameter is required.' });
-  }
-
-  try {
-    const data = await resolveMedia(targetUrl);
-    return res.status(200).json(data);
+    return res.status(404).json({
+      success: false,
+      error: 'Could not extract direct stream. Please ensure the link is public.'
+    });
   } catch (err) {
-    return res.status(500).json({ success: false, error: err.message || 'Error resolving media.' });
+    return res.status(500).json({
+      success: false,
+      error: 'Resolver error: ' + (err.message || 'Unknown server error')
+    });
   }
 };
-
-module.exports.resolveMedia = resolveMedia;
-module.exports.detectPlatform = detectPlatform;

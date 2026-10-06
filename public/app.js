@@ -87,6 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let activeTab = 'all';
 
+  function getApiBase() {
+    return localStorage.getItem('isha_backend_url') || '';
+  }
+
   // 1. Switch Active Platform Tab Function
   function switchPlatformTab(tabKey) {
     const config = PLATFORM_DATA[tabKey] || PLATFORM_DATA.all;
@@ -137,102 +141,138 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Test Sample Link Button
-  btnDemoTest.addEventListener('click', () => {
-    const sample = PLATFORM_DATA[activeTab]?.sample || PLATFORM_DATA.tiktok.sample;
-    videoInput.value = sample;
-    updateInputUI();
-    showToast('Sample link inserted! Fetching media... 🧪', 'info');
-    fetchMedia();
-  });
+  if (btnDemoTest) {
+    btnDemoTest.addEventListener('click', () => {
+      const sample = PLATFORM_DATA[activeTab]?.sample || PLATFORM_DATA.tiktok.sample;
+      videoInput.value = sample;
+      updateInputUI();
+      showToast('Sample link inserted! Fetching media... 🧪', 'info');
+      fetchMedia();
+    });
+  }
 
   // 2. Platform Detection Function
   function checkUrlPlatform(url) {
     if (!url) return null;
-    const lower = url.toLowerCase();
-    if (lower.includes('tiktok.com')) return { name: 'TikTok', class: 'tiktok', icon: '🎵' };
-    if (lower.includes('instagram.com')) return { name: 'Instagram', class: 'instagram', icon: '📸' };
-    if (lower.includes('pinterest.com') || lower.includes('pin.it')) return { name: 'Pinterest', class: 'pinterest', icon: '📌' };
-    if (lower.includes('youtube.com') || lower.includes('youtu.be')) return { name: 'YouTube', class: 'youtube', icon: '📺' };
-    if (lower.includes('facebook.com') || lower.includes('fb.watch') || lower.includes('fb.com')) return { name: 'Facebook', class: 'facebook', icon: '📘' };
-    if (lower.includes('twitter.com') || lower.includes('x.com')) return { name: 'Twitter / X', class: 'twitter', icon: '🐦' };
-    if (lower.includes('reddit.com') || lower.includes('redd.it')) return { name: 'Reddit', class: 'reddit', icon: '🤖' };
+    const clean = url.toLowerCase();
+    if (clean.includes('instagram.com')) return { name: 'Instagram 4K', class: 'instagram', icon: 'fa-brands fa-instagram' };
+    if (clean.includes('tiktok.com')) return { name: 'TikTok HD', class: 'tiktok', icon: 'fa-brands fa-tiktok' };
+    if (clean.includes('pinterest.com') || clean.includes('pin.it')) return { name: 'Pinterest 4K', class: 'pinterest', icon: 'fa-brands fa-pinterest' };
+    if (clean.includes('youtube.com') || clean.includes('youtu.be')) return { name: 'YouTube FHD', class: 'youtube', icon: 'fa-brands fa-youtube' };
+    if (clean.includes('facebook.com') || clean.includes('fb.watch') || clean.includes('fb.com')) return { name: 'Facebook HD', class: 'facebook', icon: 'fa-brands fa-facebook' };
+    if (clean.includes('twitter.com') || clean.includes('x.com')) return { name: 'Twitter / X', class: 'twitter', icon: 'fa-brands fa-x-twitter' };
+    if (clean.includes('reddit.com')) return { name: 'Reddit Media', class: 'reddit', icon: 'fa-brands fa-reddit' };
     return null;
   }
 
+  // Update Input UI (Badge, Clear Icon, Field Icon)
   function updateInputUI() {
     const val = videoInput.value.trim();
     if (val.length > 0) {
-      btnClear.style.display = 'inline-flex';
-      const platform = checkUrlPlatform(val);
-      if (platform) {
-        badgeTag.textContent = `${platform.icon} ${platform.name}`;
-        badgeTag.className = `dynamic-tag ${platform.class}`;
-        platformBadge.classList.add('active');
-      } else {
-        platformBadge.classList.remove('active');
+      btnClear.classList.add('visible');
+    } else {
+      btnClear.classList.remove('visible');
+    }
+
+    const detected = checkUrlPlatform(val);
+    if (detected) {
+      platformBadge.className = `platform-badge ${detected.class} active`;
+      badgeTag.innerHTML = `<i class="${detected.icon}"></i> ${detected.name}`;
+      if (fieldIcon) {
+        fieldIcon.className = `${detected.icon} field-icon`;
       }
     } else {
-      btnClear.style.display = 'none';
-      platformBadge.classList.remove('active');
+      platformBadge.className = 'platform-badge';
+      const config = PLATFORM_DATA[activeTab] || PLATFORM_DATA.all;
+      if (fieldIcon) {
+        fieldIcon.className = `${config.icon} field-icon`;
+      }
     }
   }
 
   videoInput.addEventListener('input', updateInputUI);
 
-  // 3. Paste Button
-  btnPaste.addEventListener('click', async () => {
-    try {
-      if (navigator.clipboard && navigator.clipboard.readText) {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-          videoInput.value = text.trim();
-          updateInputUI();
-          showToast('Link pasted from clipboard! 📋', 'success');
-          if (text.startsWith('http')) {
-            fetchMedia();
-          }
-        }
-      } else {
-        videoInput.focus();
-        showToast('Please press Ctrl+V to paste your link.', 'info');
-      }
-    } catch (err) {
-      videoInput.focus();
-      showToast('Please paste the link into the box.', 'info');
-    }
-  });
-
-  // 4. Clear Button
+  // Clear Input Button
   btnClear.addEventListener('click', () => {
     videoInput.value = '';
     updateInputUI();
     resultCard.classList.remove('active');
     videoInput.focus();
+    showToast('Input cleared! ✨', 'info');
   });
 
-  // 5. Download Action Trigger
+  // 3. Paste Clipboard Button
+  btnPaste.addEventListener('click', async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim().startsWith('http')) {
+          videoInput.value = text.trim();
+          updateInputUI();
+          showToast('Link pasted from clipboard! 📋', 'success');
+          fetchMedia();
+        } else if (text) {
+          videoInput.value = text.trim();
+          updateInputUI();
+          showToast('Pasted clipboard content.', 'info');
+        } else {
+          showToast('Clipboard is empty! Copy a link first.', 'error');
+        }
+      } else {
+        videoInput.focus();
+        document.execCommand('paste');
+        updateInputUI();
+      }
+    } catch (err) {
+      showToast('Click in the box and press Ctrl+V to paste!', 'info');
+      videoInput.focus();
+    }
+  });
+
+  // 4. Toast Notification
+  function showToast(msg, type = 'info') {
+    if (!toastContainer) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    let icon = 'fa-info-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-triangle-exclamation';
+
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${msg}</span>`;
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-10px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
+  }
+
+  // 5. Fetch Media Action Trigger
   btnFetch.addEventListener('click', () => {
     fetchMedia();
   });
 
-  videoInput.addEventListener('keypress', (e) => {
+  videoInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       fetchMedia();
     }
   });
 
-  // 6. Fetch Media from API
+  // 6. Primary Fetch Media Logic
   async function fetchMedia() {
     const url = videoInput.value.trim();
 
     if (!url) {
-      showToast('Please paste a photo or video link first!', 'error');
+      showToast('Please paste a video or photo link first! 🔗', 'error');
       videoInput.focus();
       return;
     }
 
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      showToast('Please enter a valid link starting with https://', 'error');
+      showToast('Invalid link! Make sure it starts with https://', 'error');
+      videoInput.focus();
       return;
     }
 
@@ -240,118 +280,40 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingState.classList.add('active');
     resultCard.classList.remove('active');
     btnFetch.disabled = true;
-    btnFetch.innerHTML = '<span>⚡ Processing Media...</span>';
+    btnFetch.classList.add('loading');
 
     try {
-      const response = await fetch('/api/resolve', {
+      const apiBase = getApiBase();
+      const endpoint = `${apiBase}/api/resolve`;
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
+        body: JSON.stringify({ url: url })
       });
 
-      let data = null;
-      const text = await response.text();
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        console.warn('Non-JSON response from server, using client resolver fallback');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Server responded with status ${response.status}`);
       }
 
-      if (data && data.success) {
+      const data = await response.json();
+
+      if (data && data.success && data.downloads && data.downloads.length > 0) {
         renderResult(data);
-        showToast('Media ready for 4K / HD download! 🎉', 'success');
+        showToast('Media links resolved successfully! 🎉', 'success');
       } else {
-        // Smart Client-side fallback resolver
-        const clientData = resolveMediaClient(url);
-        renderResult(clientData);
-        showToast('Media parsed successfully! 🚀', 'success');
+        throw new Error(data.error || 'No downloadable streams found for this URL.');
       }
     } catch (err) {
-      console.error(err);
-      const clientData = resolveMediaClient(url);
-      renderResult(clientData);
-      showToast('Media parsed successfully! 🚀', 'success');
+      console.error('Fetch error:', err);
+      showToast(err.message || 'Failed to download media. Check link permissions.', 'error');
     } finally {
       loadingState.classList.remove('active');
       btnFetch.disabled = false;
-      btnFetch.innerHTML = '<span>⚡ Fetch & Download</span>';
+      btnFetch.classList.remove('loading');
     }
   }
-
-  // Client-side fallback engine
-  function resolveMediaClient(rawUrl) {
-    const clean = rawUrl.trim();
-    let platform = 'Social Media';
-    let thumb = 'hero-avatar.jpg';
-    let title = 'HD Media Post';
-    let isShorts = clean.includes('/shorts/');
-    let ytId = '';
-
-    if (clean.includes('youtube.com') || clean.includes('youtu.be')) {
-      platform = 'YouTube';
-      title = isShorts ? 'YouTube Shorts HD Video' : 'YouTube Full-Length Video';
-      if (clean.includes('youtu.be/')) ytId = clean.split('youtu.be/')[1]?.split('?')[0];
-      else if (clean.includes('v=')) ytId = clean.split('v=')[1]?.split('&')[0];
-      else if (clean.includes('/shorts/')) ytId = clean.split('/shorts/')[1]?.split('?')[0];
-      if (ytId) thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
-    } else if (clean.includes('tiktok.com')) {
-      platform = 'TikTok';
-      title = 'TikTok Video (No Watermark)';
-    } else if (clean.includes('instagram.com')) {
-      platform = 'Instagram';
-      title = 'Instagram 4K Reel / Photo Post';
-    } else if (clean.includes('pinterest.com') || clean.includes('pin.it')) {
-      platform = 'Pinterest';
-      title = 'Pinterest 4K Aesthetic Wallpaper';
-    } else if (clean.includes('facebook.com') || clean.includes('fb.watch')) {
-      platform = 'Facebook';
-      title = 'Facebook HD Video / Reel';
-    }
-
-    return {
-      success: true,
-      platform: platform,
-      title: title,
-      author: 'Content Creator',
-      thumbnail: thumb,
-      duration: isShorts ? 'Shorts HD' : 'Full HD',
-      downloads: [
-        {
-          quality: '1080p Full HD Video (High Quality)',
-          resolution: '1080p FHD MP4',
-          url: clean,
-          ext: 'mp4',
-          type: 'video',
-          badge: '1080p Full HD'
-        },
-        {
-          quality: '720p HD Video (Standard)',
-          resolution: '720p HD MP4',
-          url: clean,
-          ext: 'mp4',
-          type: 'video',
-          badge: '720p HD'
-        },
-        {
-          quality: 'Original Full Audio (MP3 320kbps)',
-          resolution: '320kbps Studio Audio',
-          url: clean,
-          ext: 'mp3',
-          type: 'audio',
-          badge: '320kbps MP3'
-        },
-        {
-          quality: '4K Ultra HD Poster / Photo',
-          resolution: '4K High Quality',
-          url: thumb,
-          ext: 'jpg',
-          type: 'photo',
-          badge: '4K Ultra HD'
-        }
-      ]
-    };
-  }
-
 
   // 7. Render Download Results (4K Photos, 1080p, 720p, MP3)
   function renderResult(data) {
@@ -375,6 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     downloadOptionsContainer.innerHTML = '';
 
+    const apiBase = getApiBase();
+
     if (data.downloads && data.downloads.length > 0) {
       data.downloads.forEach((item) => {
         const row = document.createElement('div');
@@ -390,42 +354,29 @@ document.addEventListener('DOMContentLoaded', () => {
           .replace(/[^a-zA-Z0-9_-]/g, '_')
           .slice(0, 30);
         
-        const finalDownloadUrl = item.isLoader ? item.url : `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`;
-        const isExternalLoader = !!item.isLoader;
-
-        if (item.isLoader) {
-          row.innerHTML = `
-            <div class="stream-meta">
-              <span class="format-chip">${formatLabel}</span>
-              <div>
-                <div class="stream-quality-name">
-                  ${item.quality || 'High Quality'}
-                  ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
-                </div>
-                <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || '1-Click Direct In-App Download'}</small>
-              </div>
-            </div>
-            <div style="min-width: 180px; max-width: 220px; height: 52px; display: flex; align-items: center;">
-              <iframe src="${item.url}" style="width: 100%; height: 50px; border: none; overflow: hidden; border-radius: 12px;" scrolling="no"></iframe>
-            </div>
-          `;
-        } else {
-          row.innerHTML = `
-            <div class="stream-meta">
-              <span class="format-chip ${isPhoto ? 'photo' : ''}">${formatLabel}</span>
-              <div>
-                <div class="stream-quality-name">
-                  ${item.quality || 'High Quality'}
-                  ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
-                </div>
-                <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct High Speed Stream'}</small>
-              </div>
-            </div>
-            <a href="${finalDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
-              <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
-            </a>
-          `;
+        let finalDownloadUrl = item.url;
+        if (!finalDownloadUrl.startsWith('http') && !finalDownloadUrl.startsWith('/api/')) {
+          finalDownloadUrl = `/api/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(cleanSafeName)}&ext=${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}`;
         }
+        if (finalDownloadUrl.startsWith('/api/') && apiBase) {
+          finalDownloadUrl = `${apiBase}${finalDownloadUrl}`;
+        }
+
+        row.innerHTML = `
+          <div class="stream-meta">
+            <span class="format-chip ${isPhoto ? 'photo' : ''}">${formatLabel}</span>
+            <div>
+              <div class="stream-quality-name">
+                ${item.quality || 'High Quality'}
+                ${item.badge ? `<span class="gold-badge ${isUltra ? 'ultra' : ''}">${item.badge}</span>` : ''}
+              </div>
+              <small style="color: var(--text-dim); font-size: 0.8rem;">${item.resolution || 'Direct In-App High Speed Stream'}</small>
+            </div>
+          </div>
+          <a href="${finalDownloadUrl}" class="btn-stream-download" download="${cleanSafeName}.${item.ext || (isPhoto ? 'jpg' : (isAudio ? 'mp3' : 'mp4'))}">
+            <span>${isPhoto ? '📸 Save 4K Photo' : (isAudio ? '🎵 Download MP3' : '📥 Download Video')}</span>
+          </a>
+        `;
 
         downloadOptionsContainer.appendChild(row);
       });
@@ -433,104 +384,35 @@ document.addEventListener('DOMContentLoaded', () => {
       downloadOptionsContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.95rem;">No direct download formats available. Please try another link.</p>`;
     }
 
-
-
-
     resultCard.classList.add('active');
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // Direct In-App Device Downloader
-  async function forceDownloadFile(fileUrl, filename, btnElement, isPhoto) {
-    const originalHtml = btnElement.innerHTML;
-    btnElement.innerHTML = `<span>⏳ Downloading...</span>`;
-    btnElement.disabled = true;
+  // 8. Theme Toggle (Dark Mode / Luxury Gold Purple)
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    const savedTheme = localStorage.getItem('isha_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
 
-    try {
-      if (fileUrl.startsWith('https://i.pinimg.com') || fileUrl.startsWith('https://i.ytimg.com')) {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          window.URL.revokeObjectURL(blobUrl);
-          a.remove();
-        }, 1000);
-        showToast('Saved to device successfully! 📸🎉', 'success');
-      } else {
-        const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&filename=${encodeURIComponent(filename)}`;
-        const a = document.createElement('a');
-        a.href = proxyUrl;
-        a.setAttribute('download', filename);
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => a.remove(), 1000);
-        showToast('Download started! Saved directly to your device. 📥', 'success');
-      }
-    } catch (err) {
-      console.warn('In-app download trigger', err);
-      const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&filename=${encodeURIComponent(filename)}`;
-      window.location.href = proxyUrl;
-      showToast('Download started! 📥', 'info');
-    } finally {
-      setTimeout(() => {
-        btnElement.innerHTML = originalHtml;
-        btnElement.disabled = false;
-      }, 1500);
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('isha_theme', next);
+      updateThemeIcon(next);
+      showToast(`Switched to ${next} mode! ✨`, 'info');
+    });
+  }
+
+  function updateThemeIcon(theme) {
+    if (!themeToggle) return;
+    const icon = themeToggle.querySelector('i');
+    if (icon) {
+      icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     }
   }
 
-
-
-
-  // 8. Contact Isha Button
-  const btnContactIsha = document.getElementById('btnContactIsha');
-  if (btnContactIsha) {
-    btnContactIsha.addEventListener('click', () => {
-      const userMsg = prompt("Send a note / feedback to Isha Zahid (Dentist & Creator):");
-      if (userMsg && userMsg.trim().length > 0) {
-        showToast("Thank you for your message! Isha Zahid will review it soon. ♡", "success");
-      }
-    });
-  }
-
-  // 9. Toast Notifications
-  function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast-bubble toast-${type}`;
-    
-    let icon = 'ℹ️';
-    if (type === 'success') icon = '✅';
-    if (type === 'error') icon = '❌';
-
-    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
-      toast.style.transition = 'all 0.3s ease';
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
-  }
-
-  // 10. FAQ Accordion Toggle
-  const faqTriggers = document.querySelectorAll('.faq-trigger-btn');
-  faqTriggers.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const parent = btn.parentElement;
-      const isActive = parent.classList.contains('active');
-
-      document.querySelectorAll('.faq-card-unit').forEach(item => item.classList.remove('active'));
-
-      if (!isActive) {
-        parent.classList.add('active');
-      }
-    });
-  });
+  // Initial UI check
+  updateInputUI();
 });

@@ -18,9 +18,12 @@
   "author": "Isha Zahid",
   "license": "MIT",
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jinter": "^0.4.2",
+    "youtubei.js": "^18.1.0",
     "ytdlp-nodejs": "^3.4.5"
   }
 }
