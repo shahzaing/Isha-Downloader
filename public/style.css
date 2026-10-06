@@ -1,7 +1,13 @@
 /* ==========================================================================
-   ISHA VIDEO DOWNLOADER - ANANYA PASTEL BLUSH & CORAL PINK AESTHETIC THEME
-   Inspired by Reference Image (Cute, Clean & Inspiring)
+   ISHA VIDEO DOWNLOADER - IMPERIAL PURPLE & GOLD PALETTE (#3)
+   With Cute & Aesthetic Creator Layout
    Developed by Isha Zahid (Dentist & Creator)
+   Palette:
+   - #240046: Primary (Deep Imperial Purple)
+   - #E0AAFF: Secondary (Radiant Lavender Lilac)
+   - #FBB02D: CTA Buttons / Highlights (Warm Royal Gold)
+   - #ECCAFF: Cards / Sections (Soft Lilac Accents)
+   - #03071E: Deep Dark & Footer
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Sacramento&display=swap');
@@ -11,27 +17,32 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 
-  /* Ananya Reference Palette */
-  --bg-main: #FFF0F4;
-  --bg-gradient: linear-gradient(180deg, #FFEBF0 0%, #FFF5F7 50%, #FFF0F4 100%);
-  --bg-card: #FFFFFF;
-  --bg-card-soft: #FFF2F5;
-  --bg-card-tint: #FFE5EC;
+  /* Official Palette #3 */
+  --c-primary: #240046;
+  --c-secondary: #E0AAFF;
+  --c-cta: #FBB02D;
+  --c-cta-hover: #e59b1f;
+  --c-cards-lilac: #ECCAFF;
+  --c-dark: #03071E;
 
-  --color-pink-primary: #FF4066;
-  --color-pink-hover: #E62A51;
-  --color-pink-soft: #FF6B8B;
-  --color-pink-light: #FFE0E6;
-  --color-pink-border: rgba(255, 64, 102, 0.18);
+  /* Backgrounds & Surfaces */
+  --bg-main: #240046;
+  --bg-surface: #190033;
+  --bg-card: #20003d;
+  --bg-card-soft: #2d0054;
+  --bg-card-hover: #380069;
 
-  --color-gold: #FFB703;
-  --color-dark: #2B1824;
-  --color-muted: #7E6575;
-  --color-dim: #A892A0;
+  --border-lilac: rgba(224, 170, 255, 0.22);
+  --border-gold: rgba(251, 176, 45, 0.45);
 
-  --shadow-soft-pink: 0 14px 35px -8px rgba(255, 64, 102, 0.15);
-  --shadow-card-hover: 0 20px 45px -10px rgba(255, 64, 102, 0.22);
-  --shadow-pill: 0 8px 22px rgba(255, 64, 102, 0.25);
+  --text-white: #ffffff;
+  --text-lilac: #E0AAFF;
+  --text-muted: #d8b4fe;
+  --text-dark: #03071E;
+
+  --shadow-gold: 0 10px 25px -4px rgba(251, 176, 45, 0.45);
+  --shadow-purple: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 16px 40px rgba(3, 7, 30, 0.7);
 
   --radius-sm: 14px;
   --radius-md: 20px;
@@ -53,13 +64,65 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-main);
-  background: var(--bg-gradient);
-  color: var(--color-dark);
+  background-color: var(--c-primary);
+  color: var(--text-white);
   line-height: 1.65;
   overflow-x: hidden;
   position: relative;
   min-height: 100vh;
+  background-image: 
+    radial-gradient(rgba(224, 170, 255, 0.06) 1px, transparent 1px),
+    radial-gradient(rgba(251, 176, 45, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px, 64px 64px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Ambient Purple & Gold Glows */
+.aura-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.aura-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.28;
+  animation: floatAura 20s ease-in-out infinite alternate;
+}
+
+.aura-1 {
+  top: -15%;
+  left: 20%;
+  width: 700px;
+  height: 700px;
+  background: #5a189a;
+}
+
+.aura-2 {
+  top: 35%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: #E0AAFF;
+  animation-duration: 25s;
+}
+
+.aura-3 {
+  bottom: -10%;
+  left: -10%;
+  width: 650px;
+  height: 650px;
+  background: #FBB02D;
+  opacity: 0.18;
+}
+
+@keyframes floatAura {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.08); }
 }
 
 /* Container */
@@ -75,7 +138,7 @@ body {
 /* Typography Helpers */
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
-  color: var(--color-dark);
+  color: var(--text-white);
   letter-spacing: -0.02em;
 }
 
@@ -83,14 +146,14 @@ h1, h2, h3, h4 {
   font-family: var(--font-script);
 }
 
-.pink-highlight {
-  color: var(--color-pink-primary);
+.italic-pink {
+  color: var(--c-secondary);
   font-style: italic;
   font-weight: 700;
 }
 
 .heart-icon {
-  color: var(--color-pink-primary);
+  color: var(--c-cta);
   display: inline-block;
   font-size: 1.1em;
   animation: heartFloat 2s ease-in-out infinite alternate;
@@ -101,16 +164,16 @@ h1, h2, h3, h4 {
   100% { transform: scale(1.18); }
 }
 
-/* Site Header (Ananya Style) */
+/* Site Header */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background: rgba(255, 240, 244, 0.88);
-  border-bottom: 1px solid var(--color-pink-border);
-  padding: 18px 0;
+  background: rgba(36, 0, 70, 0.88);
+  border-bottom: 1px solid var(--border-lilac);
+  padding: 16px 0;
   transition: all 0.3s ease;
 }
 
@@ -131,18 +194,19 @@ h1, h2, h3, h4 {
   font-family: var(--font-script);
   font-size: 2.2rem;
   font-weight: 700;
-  color: var(--color-pink-primary);
+  color: var(--c-secondary);
   line-height: 1;
 }
 
 .brand-subtag {
-  font-size: 0.76rem;
-  font-weight: 700;
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: rgba(224, 170, 255, 0.15);
+  color: var(--c-cta);
   padding: 3px 10px;
   border-radius: var(--radius-full);
   margin-left: 6px;
+  border: 1px solid var(--border-lilac);
 }
 
 .nav-menu {
@@ -159,7 +223,7 @@ h1, h2, h3, h4 {
 }
 
 .nav-item-link {
-  color: var(--color-muted);
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 0.94rem;
   font-weight: 600;
@@ -168,7 +232,7 @@ h1, h2, h3, h4 {
 }
 
 .nav-item-link:hover, .nav-item-link.active {
-  color: var(--color-pink-primary);
+  color: var(--c-secondary);
 }
 
 .nav-item-link.active::after {
@@ -177,14 +241,15 @@ h1, h2, h3, h4 {
   bottom: -14px;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--color-pink-primary);
+  color: var(--c-cta);
   font-size: 0.75rem;
 }
 
+/* Connect Gold CTA Pill Button (#FBB02D) */
 .btn-nav-connect {
-  background: var(--color-pink-primary);
-  color: #fff;
-  font-weight: 700;
+  background: var(--c-cta);
+  color: var(--c-dark);
+  font-weight: 800;
   padding: 10px 22px;
   border-radius: var(--radius-full);
   text-decoration: none;
@@ -192,17 +257,16 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-gold);
   transition: all 0.3s;
 }
 
 .btn-nav-connect:hover {
-  background: var(--color-pink-hover);
+  background: #ffbe3b;
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(255, 64, 102, 0.35);
 }
 
-/* Hero Section (Ananya Reference Style) */
+/* Hero Section */
 .hero-ananya-section {
   padding: 60px 0 40px;
   position: relative;
@@ -236,8 +300,9 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.15);
+  border: 1px solid var(--border-lilac);
+  color: var(--c-secondary);
   padding: 6px 18px;
   border-radius: var(--radius-full);
   font-size: 0.84rem;
@@ -251,20 +316,19 @@ h1, h2, h3, h4 {
   font-weight: 900;
   line-height: 1.12;
   margin-bottom: 20px;
-  color: var(--color-dark);
-}
-
-.hero-main-title span.italic-pink {
-  color: var(--color-pink-primary);
-  font-style: italic;
+  color: var(--text-white);
 }
 
 .hero-main-description {
   font-size: clamp(1rem, 2vw, 1.15rem);
-  color: var(--color-muted);
+  color: var(--text-muted);
   line-height: 1.7;
   margin-bottom: 30px;
   max-width: 560px;
+}
+
+.hero-main-description strong {
+  color: var(--text-white);
 }
 
 .hero-actions-row {
@@ -280,32 +344,34 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Primary Gold Action Button (#FBB02D) */
 .btn-ananya-primary {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   text-decoration: none;
   font-family: var(--font-heading);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 15px 34px;
   border-radius: var(--radius-full);
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-gold);
   transition: all 0.3s ease;
 }
 
 .btn-ananya-primary:hover {
-  background: var(--color-pink-hover);
+  background: #ffbe3b;
   transform: translateY(-3px);
-  box-shadow: 0 14px 35px rgba(255, 64, 102, 0.35);
+  box-shadow: 0 14px 35px rgba(251, 176, 45, 0.6);
 }
 
+/* Secondary Lilac Outline Button (#E0AAFF) */
 .btn-ananya-secondary {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-border);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.12);
+  border: 1.5px solid var(--c-secondary);
+  color: var(--c-secondary);
   text-decoration: none;
   font-size: 1rem;
   font-weight: 700;
@@ -314,17 +380,16 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
   transition: all 0.3s;
 }
 
 .btn-ananya-secondary:hover {
-  background: var(--color-pink-light);
-  border-color: var(--color-pink-primary);
+  background: var(--c-secondary);
+  color: var(--c-primary);
   transform: translateY(-2px);
 }
 
-/* Find Me On Social Shelf (Sample Style) */
+/* Find Me On Shelf */
 .find-me-box {
   display: flex;
   align-items: center;
@@ -340,7 +405,7 @@ h1, h2, h3, h4 {
 .find-me-label {
   font-size: 0.82rem;
   font-weight: 800;
-  color: var(--color-dim);
+  color: var(--c-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -354,23 +419,22 @@ h1, h2, h3, h4 {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #fff;
-  border: 1px solid var(--color-pink-border);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.12);
+  border: 1px solid var(--border-lilac);
+  color: var(--c-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
   font-size: 0.95rem;
   transition: all 0.25s;
-  box-shadow: 0 4px 12px rgba(255, 64, 102, 0.08);
 }
 
 .social-icon-btn:hover {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   transform: translateY(-3px);
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-gold);
 }
 
 /* Hero Right Visual */
@@ -393,20 +457,20 @@ h1, h2, h3, h4 {
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-xl);
-  border: 4px solid #fff;
-  box-shadow: 0 20px 50px rgba(255, 64, 102, 0.18);
+  border: 3px solid var(--c-secondary);
+  box-shadow: var(--shadow-card);
 }
 
 /* ==========================================================================
-   ABOUT ISHA (DENTIST & CREATOR) CARD - SAMPLE MATCHING
+   ABOUT ISHA (DENTIST & CREATOR) CARD (#ECCAFF & Purple Accents)
    ========================================================================== */
 .about-ananya-card {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-border);
+  background: #20003d;
+  border: 2px solid var(--c-secondary);
   border-radius: var(--radius-xl);
   padding: 45px 38px;
   margin: 40px auto 60px;
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-card);
   max-width: 1100px;
 }
 
@@ -430,13 +494,14 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.15);
+  color: var(--c-secondary);
   font-size: 0.8rem;
   font-weight: 800;
   padding: 4px 14px;
   border-radius: var(--radius-full);
   margin-bottom: 16px;
+  border: 1px solid var(--border-lilac);
 }
 
 .about-heading-quote {
@@ -447,21 +512,21 @@ h1, h2, h3, h4 {
 }
 
 .about-bio-text {
-  color: var(--color-muted);
+  color: var(--text-muted);
   font-size: 0.98rem;
   line-height: 1.7;
   margin-bottom: 24px;
 }
 
 .about-bio-text strong {
-  color: var(--color-dark);
+  color: var(--text-white);
 }
 
 .btn-about-more {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   border: none;
-  font-weight: 700;
+  font-weight: 800;
   padding: 12px 28px;
   border-radius: var(--radius-full);
   font-size: 0.92rem;
@@ -469,16 +534,16 @@ h1, h2, h3, h4 {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-gold);
   transition: all 0.3s;
 }
 
 .btn-about-more:hover {
-  background: var(--color-pink-hover);
+  background: #ffbe3b;
   transform: translateY(-2px);
 }
 
-/* 4 Feature Sub-cards (Sample Style) */
+/* 4 Feature Sub-cards */
 .about-features-2x2 {
   display: grid;
   grid-template-columns: 1fr;
@@ -492,8 +557,8 @@ h1, h2, h3, h4 {
 }
 
 .sub-feature-item {
-  background: var(--bg-card-soft);
-  border: 1px solid var(--color-pink-border);
+  background: #2b0052;
+  border: 1px solid var(--border-lilac);
   padding: 22px 18px;
   border-radius: var(--radius-md);
   text-align: left;
@@ -501,18 +566,18 @@ h1, h2, h3, h4 {
 }
 
 .sub-feature-item:hover {
-  background: #fff;
-  border-color: var(--color-pink-primary);
+  background: #360066;
+  border-color: var(--c-cta);
   transform: translateY(-3px);
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-purple);
 }
 
 .sub-feature-icon {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-sm);
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: var(--c-cta);
+  color: var(--c-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -523,16 +588,17 @@ h1, h2, h3, h4 {
 .sub-feature-item h4 {
   font-size: 1.05rem;
   margin-bottom: 6px;
+  color: var(--text-white);
 }
 
 .sub-feature-item p {
   font-size: 0.85rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
 /* ==========================================================================
-   INTERACTIVE DOWNLOADER CHAMBER (CLEAN & AESTHETIC)
+   INTERACTIVE DOWNLOADER CHAMBER (IMPERIAL PURPLE #240046 & GOLD)
    ========================================================================== */
 .section-head-box {
   text-align: center;
@@ -544,7 +610,7 @@ h1, h2, h3, h4 {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-pink-primary);
+  color: var(--c-cta);
   margin-bottom: 8px;
   display: inline-block;
 }
@@ -552,14 +618,15 @@ h1, h2, h3, h4 {
 .section-headline {
   font-size: clamp(2rem, 3.8vw, 2.8rem);
   font-weight: 800;
+  color: var(--text-white);
 }
 
 .downloader-ananya-box {
-  background: #fff;
-  border: 2px solid var(--color-pink-border);
+  background: #20003d;
+  border: 2px solid var(--c-secondary);
   border-radius: var(--radius-xl);
   padding: 38px 30px;
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-card);
   max-width: 920px;
   margin: 0 auto;
   position: relative;
@@ -573,13 +640,13 @@ h1, h2, h3, h4 {
   gap: 8px;
   margin-bottom: 24px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--color-pink-border);
+  border-bottom: 1px solid var(--border-lilac);
 }
 
 .tab-btn {
-  background: var(--bg-card-soft);
-  border: 1px solid var(--color-pink-border);
-  color: var(--color-muted);
+  background: #2b0052;
+  border: 1px solid var(--border-lilac);
+  color: var(--text-muted);
   padding: 9px 18px;
   border-radius: var(--radius-full);
   font-size: 0.88rem;
@@ -592,21 +659,21 @@ h1, h2, h3, h4 {
 }
 
 .tab-btn:hover {
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.2);
+  color: var(--text-white);
   transform: translateY(-2px);
 }
 
 .tab-btn.active {
-  background: var(--color-pink-primary);
-  color: #fff !important;
-  border-color: var(--color-pink-primary);
-  box-shadow: var(--shadow-pill);
+  background: var(--c-cta);
+  color: var(--c-dark) !important;
+  border-color: var(--c-cta);
+  box-shadow: var(--shadow-gold);
   transform: translateY(-2px) scale(1.04);
 }
 
 .tab-btn.active i {
-  color: #fff !important;
+  color: var(--c-dark) !important;
 }
 
 /* Platform Mode Banner */
@@ -616,8 +683,8 @@ h1, h2, h3, h4 {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  background: var(--bg-card-soft);
-  border: 1px solid var(--color-pink-border);
+  background: #2e0057;
+  border: 1px solid var(--border-lilac);
   padding: 12px 20px;
   border-radius: var(--radius-sm);
   margin-bottom: 20px;
@@ -625,8 +692,8 @@ h1, h2, h3, h4 {
 }
 
 .mode-badge {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   font-size: 0.75rem;
   font-weight: 800;
   padding: 4px 12px;
@@ -636,29 +703,27 @@ h1, h2, h3, h4 {
 
 .mode-text {
   font-size: 0.88rem;
-  color: var(--color-muted);
+  color: var(--c-secondary);
   font-weight: 500;
 }
 
 .btn-demo-test {
-  background: #fff;
-  border: 1px solid var(--color-pink-border);
-  color: var(--color-pink-primary);
+  background: var(--c-secondary);
+  border: none;
+  color: var(--c-dark);
   padding: 7px 16px;
   border-radius: var(--radius-full);
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
   transition: all 0.2s;
 }
 
 .btn-demo-test:hover {
-  background: var(--color-pink-light);
-  border-color: var(--color-pink-primary);
+  background: var(--c-cta);
 }
 
 /* Input Frame */
@@ -685,15 +750,15 @@ h1, h2, h3, h4 {
   position: absolute;
   left: 20px;
   font-size: 1.25rem;
-  color: var(--color-pink-primary);
+  color: var(--c-secondary);
   pointer-events: none;
 }
 
 .main-input {
   width: 100%;
-  background: var(--bg-card-soft);
-  border: 1.5px solid var(--color-pink-border);
-  color: var(--color-dark);
+  background: #120024;
+  border: 1.5px solid var(--border-lilac);
+  color: var(--text-white);
   font-family: var(--font-body);
   font-size: 1.05rem;
   font-weight: 500;
@@ -704,13 +769,12 @@ h1, h2, h3, h4 {
 }
 
 .main-input:focus {
-  background: #fff;
-  border-color: var(--color-pink-primary);
-  box-shadow: 0 0 0 4px rgba(255, 64, 102, 0.15);
+  border-color: var(--c-cta);
+  box-shadow: 0 0 0 4px rgba(251, 176, 45, 0.25);
 }
 
 .main-input::placeholder {
-  color: var(--color-dim);
+  color: rgba(224, 170, 255, 0.5);
   font-size: 0.95rem;
 }
 
@@ -722,9 +786,9 @@ h1, h2, h3, h4 {
 }
 
 .tool-btn {
-  background: #fff;
-  border: 1px solid var(--color-pink-border);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.15);
+  border: 1px solid var(--border-lilac);
+  color: var(--c-secondary);
   border-radius: var(--radius-sm);
   padding: 7px 12px;
   font-size: 0.8rem;
@@ -737,21 +801,22 @@ h1, h2, h3, h4 {
 }
 
 .tool-btn:hover {
-  background: var(--color-pink-light);
+  background: var(--c-secondary);
+  color: var(--c-primary);
 }
 
-/* Pink Fetch & Download CTA Button */
+/* Gold Fetch & Download CTA Button */
 .btn-pulse-action {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   border: none;
   font-family: var(--font-heading);
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 900;
   padding: 18px 36px;
   border-radius: var(--radius-md);
   cursor: pointer;
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-gold);
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
@@ -761,9 +826,9 @@ h1, h2, h3, h4 {
 }
 
 .btn-pulse-action:hover {
-  background: var(--color-pink-hover);
+  background: #ffbe3b;
   transform: translateY(-2px);
-  box-shadow: 0 14px 35px rgba(255, 64, 102, 0.35);
+  box-shadow: 0 14px 35px rgba(251, 176, 45, 0.7);
 }
 
 /* Live Detected Platform */
@@ -812,8 +877,8 @@ h1, h2, h3, h4 {
 .hologram-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid var(--color-pink-light);
-  border-top-color: var(--color-pink-primary);
+  border: 4px solid rgba(224, 170, 255, 0.2);
+  border-top-color: var(--c-cta);
   border-radius: 50%;
   animation: spinSlow 0.8s linear infinite;
 }
@@ -827,11 +892,11 @@ h1, h2, h3, h4 {
   display: none;
   max-width: 920px;
   margin: 36px auto 0;
-  background: #fff;
-  border: 2px solid var(--color-pink-border);
+  background: #20003d;
+  border: 2px solid var(--c-secondary);
   border-radius: var(--radius-xl);
   padding: 30px;
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-card);
 }
 
 .result-chamber.active {
@@ -844,7 +909,7 @@ h1, h2, h3, h4 {
   gap: 22px;
   margin-bottom: 26px;
   padding-bottom: 22px;
-  border-bottom: 1px solid var(--color-pink-border);
+  border-bottom: 1px solid var(--border-lilac);
 }
 
 @media (min-width: 680px) {
@@ -863,7 +928,7 @@ h1, h2, h3, h4 {
   overflow: hidden;
   background: #000;
   flex-shrink: 0;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
 }
 
@@ -877,8 +942,8 @@ h1, h2, h3, h4 {
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
+  background: var(--c-dark);
+  color: var(--c-cta);
   font-size: 0.72rem;
   font-weight: 800;
   padding: 3px 8px;
@@ -898,8 +963,8 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 800;
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: rgba(224, 170, 255, 0.15);
+  color: var(--c-secondary);
   margin-bottom: 10px;
 }
 
@@ -908,12 +973,12 @@ h1, h2, h3, h4 {
   font-weight: 800;
   margin-bottom: 8px;
   line-height: 1.35;
-  color: var(--color-dark);
+  color: var(--text-white);
 }
 
 .media-author-text {
   font-size: 0.92rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 /* Download Streams Grid */
@@ -922,7 +987,7 @@ h1, h2, h3, h4 {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-pink-primary);
+  color: var(--c-secondary);
   margin-bottom: 16px;
   text-align: left;
 }
@@ -937,18 +1002,17 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-card-soft);
-  border: 1px solid var(--color-pink-border);
+  background: #2b0052;
+  border: 1px solid var(--border-lilac);
   padding: 14px 22px;
   border-radius: var(--radius-md);
   transition: all 0.25s ease;
 }
 
 .stream-row:hover {
-  background: #fff;
-  border-color: var(--color-pink-primary);
+  background: #360066;
+  border-color: var(--c-cta);
   transform: translateX(4px);
-  box-shadow: 0 6px 20px rgba(255, 64, 102, 0.12);
 }
 
 .stream-meta {
@@ -958,8 +1022,8 @@ h1, h2, h3, h4 {
 }
 
 .format-chip {
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: var(--c-secondary);
+  color: var(--c-dark);
   font-weight: 800;
   font-size: 0.78rem;
   padding: 5px 12px;
@@ -967,19 +1031,19 @@ h1, h2, h3, h4 {
 }
 
 .format-chip.photo {
-  background: #FFE8D6;
-  color: #D95D39;
+  background: var(--c-cta);
+  color: var(--c-dark);
 }
 
 .stream-quality-name {
   font-size: 0.98rem;
   font-weight: 700;
-  color: var(--color-dark);
+  color: var(--text-white);
 }
 
 .gold-badge {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   font-size: 0.68rem;
   font-weight: 800;
   padding: 2px 8px;
@@ -989,8 +1053,8 @@ h1, h2, h3, h4 {
 }
 
 .btn-stream-download {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 800;
@@ -1000,11 +1064,11 @@ h1, h2, h3, h4 {
   align-items: center;
   gap: 8px;
   transition: all 0.25s ease;
-  box-shadow: var(--shadow-pill);
+  box-shadow: var(--shadow-gold);
 }
 
 .btn-stream-download:hover {
-  background: var(--color-pink-hover);
+  background: #ffbe3b;
   transform: translateY(-2px);
 }
 
@@ -1030,27 +1094,27 @@ h1, h2, h3, h4 {
 }
 
 .featured-platform-card {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-border);
+  background: #2b0052;
+  border: 1.5px solid var(--border-lilac);
   border-radius: var(--radius-lg);
   padding: 28px 24px;
   text-align: left;
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
 }
 
 .featured-platform-card:hover {
   transform: translateY(-5px);
-  border-color: var(--color-pink-primary);
-  box-shadow: var(--shadow-soft-pink);
+  border-color: var(--c-cta);
+  background: #360066;
+  box-shadow: var(--shadow-purple);
 }
 
 .card-num-badge {
   display: inline-block;
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   font-size: 0.75rem;
   font-weight: 800;
   padding: 2px 10px;
@@ -1066,11 +1130,12 @@ h1, h2, h3, h4 {
 .featured-platform-card h3 {
   font-size: 1.2rem;
   margin-bottom: 8px;
+  color: var(--text-white);
 }
 
 .featured-platform-card p {
   font-size: 0.9rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
   margin-bottom: 16px;
   line-height: 1.5;
 }
@@ -1079,31 +1144,32 @@ h1, h2, h3, h4 {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-pink-light);
-  color: var(--color-pink-primary);
+  background: var(--c-secondary);
+  color: var(--c-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
+  font-weight: 800;
   transition: all 0.25s;
 }
 
 .featured-platform-card:hover .btn-card-arrow {
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
 }
 
 /* ==========================================================================
    QUOTE / TESTIMONIAL BANNER (SAMPLE STYLE)
    ========================================================================== */
 .testimonial-banner-box {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-border);
+  background: #20003d;
+  border: 1.5px solid var(--border-lilac);
   border-radius: var(--radius-xl);
   padding: 28px 36px;
   margin: 50px auto;
   max-width: 960px;
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;
   gap: 24px;
@@ -1120,8 +1186,8 @@ h1, h2, h3, h4 {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: var(--color-pink-primary);
-  color: #fff;
+  background: var(--c-cta);
+  color: var(--c-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1131,28 +1197,28 @@ h1, h2, h3, h4 {
 
 .quote-content-text {
   font-size: 1.05rem;
-  color: var(--color-dark);
+  color: var(--text-white);
   font-weight: 600;
   line-height: 1.5;
 }
 
 .quote-author-name {
   font-size: 0.85rem;
-  color: var(--color-pink-primary);
+  color: var(--c-secondary);
   font-weight: 700;
   margin-top: 4px;
 }
 
 /* ==========================================================================
-   LET'S CREATE SOMETHING AMAZING SECTION (SAMPLE STYLE)
+   LET'S CREATE SOMETHING AMAZING SECTION
    ========================================================================== */
 .connect-amazing-card {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-border);
+  background: #20003d;
+  border: 2px solid var(--c-secondary);
   border-radius: var(--radius-xl);
   padding: 45px 38px;
   margin: 40px auto 60px;
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-card);
   max-width: 1000px;
 }
 
@@ -1183,11 +1249,11 @@ h1, h2, h3, h4 {
   margin-bottom: 14px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 .connect-detail-item i {
-  color: var(--color-pink-primary);
+  color: var(--c-cta);
   font-size: 1.1rem;
 }
 
@@ -1201,12 +1267,11 @@ h1, h2, h3, h4 {
 }
 
 .faq-card-unit {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-border);
+  background: #2b0052;
+  border: 1px solid var(--border-lilac);
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .faq-trigger-btn {
@@ -1214,7 +1279,7 @@ h1, h2, h3, h4 {
   padding: 20px 26px;
   background: none;
   border: none;
-  color: var(--color-dark);
+  color: var(--text-white);
   font-family: var(--font-heading);
   font-size: 1.05rem;
   font-weight: 700;
@@ -1228,7 +1293,7 @@ h1, h2, h3, h4 {
 
 .faq-arrow {
   font-size: 1rem;
-  color: var(--color-pink-primary);
+  color: var(--c-cta);
   transition: transform 0.3s ease;
 }
 
@@ -1241,7 +1306,7 @@ h1, h2, h3, h4 {
   overflow: hidden;
   transition: max-height 0.35s ease, padding 0.35s ease;
   padding: 0 26px;
-  color: var(--color-muted);
+  color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.65;
 }
@@ -1251,10 +1316,10 @@ h1, h2, h3, h4 {
   padding: 0 26px 22px;
 }
 
-/* Site Footer */
+/* Site Footer (#03071E) */
 .site-footer {
-  border-top: 1.5px solid var(--color-pink-border);
-  background: #FFE8EE;
+  border-top: 1px solid var(--border-lilac);
+  background: var(--c-dark);
   padding: 40px 0 25px;
   margin-top: 60px;
 }
@@ -1270,13 +1335,13 @@ h1, h2, h3, h4 {
 .footer-script-brand {
   font-family: var(--font-script);
   font-size: 2.4rem;
-  color: var(--color-pink-primary);
+  color: var(--c-secondary);
   font-weight: 700;
 }
 
 .footer-copy-text {
   font-size: 0.88rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -1292,14 +1357,14 @@ h1, h2, h3, h4 {
 }
 
 .toast-bubble {
-  background: #fff;
-  border: 1.5px solid var(--color-pink-primary);
-  color: var(--color-dark);
+  background: #20003d;
+  border: 1.5px solid var(--c-cta);
+  color: var(--text-white);
   padding: 14px 22px;
   border-radius: var(--radius-md);
   font-size: 0.92rem;
   font-weight: 700;
-  box-shadow: var(--shadow-soft-pink);
+  box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1311,7 +1376,7 @@ h1, h2, h3, h4 {
 }
 
 .toast-bubble.toast-success {
-  border-color: var(--color-pink-primary);
+  border-color: var(--c-cta);
 }
 
 @keyframes slideToast {
