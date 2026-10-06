@@ -426,15 +426,14 @@ document.addEventListener('DOMContentLoaded', () => {
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // Direct Device Download Action
-  async function forceDownloadFile(fileUrl, filename, btnElement, isDirect) {
+  // Direct In-App Device Downloader
+  async function forceDownloadFile(fileUrl, filename, btnElement, isPhoto) {
     const originalHtml = btnElement.innerHTML;
+    btnElement.innerHTML = `<span>⏳ Downloading...</span>`;
+    btnElement.disabled = true;
 
     try {
-      if (isDirect || fileUrl.startsWith('https://i.pinimg.com') || fileUrl.startsWith('https://i.ytimg.com')) {
-        btnElement.innerHTML = `<span>⏳ Saving 4K Photo...</span>`;
-        btnElement.disabled = true;
-
+      if (fileUrl.startsWith('https://i.pinimg.com') || fileUrl.startsWith('https://i.ytimg.com')) {
         const response = await fetch(fileUrl);
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
@@ -448,17 +447,22 @@ document.addEventListener('DOMContentLoaded', () => {
           window.URL.revokeObjectURL(blobUrl);
           a.remove();
         }, 1000);
-        showToast('Photo saved to your device! 📸🎉', 'success');
+        showToast('Saved to device successfully! 📸🎉', 'success');
       } else {
-        // Direct Video Downloader Gateway
-        btnElement.innerHTML = `<span>⚡ Opening Downloader...</span>`;
-        window.open(fileUrl, '_blank', 'noopener,noreferrer');
-        showToast('Opening video download server... 📥', 'info');
+        const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&filename=${encodeURIComponent(filename)}`;
+        const a = document.createElement('a');
+        a.href = proxyUrl;
+        a.setAttribute('download', filename);
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => a.remove(), 1000);
+        showToast('Download started! Saved directly to your device. 📥', 'success');
       }
     } catch (err) {
-      console.warn('Direct download trigger', err);
-      window.open(fileUrl, '_blank');
-      showToast('Opening download link... 📥', 'info');
+      console.warn('In-app download trigger', err);
+      const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&filename=${encodeURIComponent(filename)}`;
+      window.location.href = proxyUrl;
+      showToast('Download started! 📥', 'info');
     } finally {
       setTimeout(() => {
         btnElement.innerHTML = originalHtml;
@@ -466,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1500);
     }
   }
+
 
 
 
